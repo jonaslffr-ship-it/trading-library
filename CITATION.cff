@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you cite or build on this work, please cite it as below."
+title: "Trading Library — a scientific paper series on options, volatility, market mechanics, and quantitative method"
+authors:
+  - family-names: "Löffler"
+    given-names: "Jonas"
+    email: "loefflerjonas6@gmail.com"
+type: dataset
+version: "1.0"
+date-released: "2026-09-20"
+license: CC-BY-4.0
+abstract: >
+  A public series of self-written scientific papers (levels L1–L3, English and
+  German) covering options mechanics and the greeks, dealer hedging flows and
+  GEX, volatility and the VIX complex, statistics and backtesting methodology,
+  overfitting control and forecast calibration, macro regimes, systematic and
+  dealer flows, and algorithm build/run/kill discipline. Every empirical number
+  is reproducible from free, publicly retrievable data with the accompanying
+  figure scripts. Corrections are tracked in ERRATA.md and CHANGELOG.md.
+keywords:
+  - options
+  - greeks
+  - gamma exposure
+  - volatility
+  - variance risk premium
+  - backtesting
+  - overfitting
+  - calibration
+  - quantitative finance

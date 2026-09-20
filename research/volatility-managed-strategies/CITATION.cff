@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use this code or paper, please cite it as below."
+title: "Realized-Volatility Forecasting and Volatility-Managed Sizing on the S&P 500: A Pre-Registered, Walk-Forward, Multiple-Testing-Corrected Study"
+authors:
+  - family-names: "Löffler"
+    given-names: "Jonas"
+date-released: "2026-08-31"
+version: "1.0"
+type: software
+keywords:
+  - realized volatility
+  - HAR model
+  - volatility-managed portfolios
+  - VIX term structure
+  - walk-forward analysis
+  - backtest overfitting
+  - deflated Sharpe ratio
+  - null result
+license: MIT
+abstract: >
+  A pre-registered, walk-forward, multiple-testing-corrected study on 21 years of
+  1-minute S&P 500 data (plus the VIX term structure). The forecasting result
+  replicates cleanly: log-HAR beats the random walk out-of-sample under QLIKE
+  (Clark-West p approx 0.03), implied volatility adds information (HAR-IV), and a
+  rich linear feature set edges HAR-IV through features rather than regularization
+  or nonlinearity; a loss-matched Gamma-GLM with the VIX term-structure slope is the
+  one forecasting increment beyond replication (lower QLIKE and MSE, DM p = 0.0008).
+  A lag diagnostic shows the forecast's residual "lag" is a 2.5x underestimation of
+  the worst volatility spikes that an intraday nowcast only partly reduces. The
+  trading result is reported as a NULL: the best walk-forward
+  volatility-managed / VIX-term-structure combination (Sharpe 0.96, max drawdown
+  -9.9 percent) is disqualified by the study's own pre-registered rules (probability
+  of backtest overfitting 0.84; single-market effect), its Sharpe advantage over
+  buy-and-hold is inside the bootstrap noise band, and its clean drawdown profile is
+  largely a volatility-level artifact. All failures are reported. No result reaches
+  supported status without a live, ex-ante prediction log.

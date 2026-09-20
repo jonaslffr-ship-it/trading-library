@@ -1,0 +1,34 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+SPDX-License-Identifier: CC-BY-4.0
+
+Copyright (c) 2026 Jonas Löffler
+
+This license covers the *written papers and their figures* in this repository
+(the L1/L2/L3 documents in Markdown and PDF, English and German, and the PNG
+figures under each `figures/` directory). The accompanying source code is
+licensed separately under the MIT License; see LICENSE-CODE. Third-party study
+PDFs in tracks 00–02 and 06 are NOT covered by this license — rights remain
+with their original authors/publishers; see NOTICE.md.
+
+You are free to:
+  - Share — copy and redistribute the material in any medium or format;
+  - Adapt — remix, transform, and build upon the material for any purpose,
+    even commercially.
+
+Under the following terms:
+  - Attribution — You must give appropriate credit to "Jonas Löffler, Trading
+    Library (2026)", provide a link to the source repository, and indicate if
+    changes were made. You may do so in any reasonable manner, but not in any
+    way that suggests the licensor endorses you or your use.
+  - No additional restrictions — You may not apply legal terms or technological
+    measures that legally restrict others from doing anything the license
+    permits.
+
+Full legal code:  https://creativecommons.org/licenses/by/4.0/legalcode
+Human-readable summary:  https://creativecommons.org/licenses/by/4.0/
+
+Data note: the numbers and figures are reproducible from free, publicly
+retrievable data, but the underlying vendor data (e.g. CBOE delayed quotes,
+optionsDX chains, Yahoo Finance) is retrieved by the scripts at run time and is
+NOT redistributed here; its own terms of use apply to anyone who re-fetches it.
+See the "Data license" section of README.md.

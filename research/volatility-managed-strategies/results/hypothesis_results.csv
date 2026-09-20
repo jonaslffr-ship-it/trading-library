@@ -1,0 +1,8 @@
+H,Test,Statistik,Verdikt
+H-A0,"HAR-IV vs log-HAR (QLIKE, Clark-West)","QLIKE 0.2041 vs 0.2254, CW p=0.019",Evidenz: VIX hilft
+H-A1,cond. VRP -> 5d forward return (NW),"t=1.29, beta +, R2=0.012",keine/schwach
+H-A1,cond. VRP -> 21d forward return (NW),"t=1.04, beta +, R2=0.065",keine/schwach
+H-A2,VRP-Gate am Vol-Managed (Sharpe / MaxDD),"Sharpe 0.84 vs 0.85, DD -0.24 vs -0.25",marginal/keine
+H-B1,RS- (downside) -> next-day return (NW),"t(RS-)=-0.18, beta -",keine/schwach
+H-B2,Downside-Vol- vs Total-Vol-Targeting,"Sharpe 0.42 vs 0.48, DD -0.67 vs -0.63",keine
+H-C1,Vol-of-Vol -> 21d return / De-Risk-Gate,t(VoV)=-0.83; Gate Sharpe 0.53 vs 0.85,keine (Gate senkt Sharpe)

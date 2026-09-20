@@ -1,0 +1,9 @@
+entry,kind,market,provider,n_files,bytes,period_start,period_end,sha256,note
+data/processed/feat_SPX.parquet,shipped,SPX,derived/FRED,1,340773,,,b70e6ac92d93dc34b9b406c0ae9d2aac4d5e28c178723b64485d86088ff6e312,derived RV/HAR features from licensed 1-min
+data/processed/ohlc_SPX.parquet,shipped,SPX,derived/FRED,1,118852,,,d62c70f9b6a93900598a2a177bfa814f578fc346bc4479919feb5ea4f65415d0,derived daily OHLC from licensed 1-min
+data/processed/vmpred_SPX.parquet,shipped,SPX,derived/FRED,1,60372,,,0efa12d4f571b1c82e8894eba5bef752a8ada18f3e8858d581abd29aa8e94506,log-HAR OOS variance forecast
+data/processed/spx_2024_5min.parquet,shipped,SPX,derived/FRED,1,25525,,,c434451524f3537a4ccf2a603ba78a9933361bef0435d3cebe8c99203a3aaf14,SPX 2024 5-min sample (reality check)
+data/macro/VIXCLS.csv,shipped,VIX,derived/FRED,1,94974,,,3b93a1ba35f7a653961e922f1f3b4a425ca81a3bbac8b694c67b0d4cdef10a56,"FRED VIXCLS, public"
+data/macro/VXVCLS.csv,shipped,VIX3M,derived/FRED,1,82070,,,487ccfb644090ad505c437333f4b2485d77106e5ddb2dc489ded71178482ec0c,"FRED VXVCLS, public"
+SPX_1min,raw,SPX,MarketTick,5543,126576965,20050103,20260813,2a7e7443d4dbfab1df1685fea3b64d1a86b7a5e353b0abfb0ca77a1c8d39dd50,licensed; not redistributed
+VIX_1min,raw,VIX,MarketTick,5280,131708902,20060103,20260814,5fac452bc2275d09cc287d610deb387fb888269e7f0fdb8a7103e7471fb3223d,licensed; not redistributed
