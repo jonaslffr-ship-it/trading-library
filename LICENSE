@@ -6,9 +6,10 @@ Copyright (c) 2026 Jonas Löffler
 This license covers the *written papers and their figures* in this repository
 (the L1/L2/L3 documents in Markdown and PDF, English and German, and the PNG
 figures under each `figures/` directory). The accompanying source code is
-licensed separately under the MIT License; see LICENSE-CODE. Third-party study
-PDFs in tracks 00–02 and 06 are NOT covered by this license — rights remain
-with their original authors/publishers; see NOTICE.md.
+licensed separately under the MIT License; see LICENSE-CODE. This repository
+redistributes no third-party study PDFs; external works are cited within the
+papers and remain under their original authors'/publishers' rights. See
+NOTICE.md.
 
 You are free to:
   - Share — copy and redistribute the material in any medium or format;
@@ -28,7 +29,8 @@ Full legal code:  https://creativecommons.org/licenses/by/4.0/legalcode
 Human-readable summary:  https://creativecommons.org/licenses/by/4.0/
 
 Data note: the numbers and figures are reproducible from free, publicly
-retrievable data, but the underlying vendor data (e.g. CBOE delayed quotes,
-optionsDX chains, Yahoo Finance) is retrieved by the scripts at run time and is
-NOT redistributed here; its own terms of use apply to anyone who re-fetches it.
-See the "Data license" section of README.md.
+retrievable data. Free daily-history CSVs that CBOE publishes for public
+download (e.g. VIX_History.csv) are included under figures/data/; the licensed
+intraday option-chain snapshots and optionsDX end-of-day chains are NOT
+redistributed here and are re-fetched by the scripts at run time, under each
+vendor's own terms of use. See the "Data license" section of README.md.

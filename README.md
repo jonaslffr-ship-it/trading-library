@@ -87,7 +87,7 @@ The library holds 25 papers. The core is a program of 22 documents across seven 
 
 ## Data license
 
-Every number is reproducible from **free, publicly retrievable** sources — Yahoo Finance's chart API, FRED, CBOE public delayed quotes and daily-history CSVs, CFTC, and optionsDX end-of-day chains. "Freely retrievable" is **not** the same as "redistributable": the figure scripts re-fetch vendor data at run time, and this repository does not redistribute raw CBOE/optionsDX quotes — only derived aggregates and the code needed to rebuild them. Anyone re-fetching that data is bound by the vendor's own terms of use.
+Every number is reproducible from **free, publicly retrievable** sources — Yahoo Finance's chart API, FRED, CBOE public delayed quotes and daily-history CSVs, CFTC, and optionsDX end-of-day chains. "Freely retrievable" is **not** the same as "redistributable": the figure scripts re-fetch the **licensed intraday option-chain snapshots** at run time (these are git-ignored and never redistributed), while the **free daily-history CSVs that CBOE publishes for public download** (e.g. `VIX_History.csv`, nine files under `04-volatility/figures/data/`) are included so the daily-data figures rebuild offline. This repository therefore redistributes no licensed optionsDX or CBOE intraday chains — only those free daily histories, derived aggregates, and the code needed to rebuild them (ERRATA F2). Anyone re-fetching that data is bound by the vendor's own terms of use.
 
 ## Sources & copyright
 
