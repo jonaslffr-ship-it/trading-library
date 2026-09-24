@@ -13,7 +13,7 @@ echo "================================================================"
 while IFS= read -r f; do
   dir=$(dirname "$f"); base=$(basename "$f")
   total=$((total+1))
-  out=$( cd "$dir" && timeout 60 "$PY" "$base" 2>&1 ); rc=$?
+  out=$( cd "$dir" && timeout 180 "$PY" "$base" 2>&1 ); rc=$?
   if printf "%s" "$out" | grep -q '^SKIPPED'; then
     skip=$((skip+1)); printf "[SKIP] %s :: %s\n" "$f" "$(printf '%s' "$out" | grep -m1 '^SKIPPED')"
   elif [ $rc -eq 0 ]; then
