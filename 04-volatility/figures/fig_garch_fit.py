@@ -106,9 +106,17 @@ print(f"GARCH(1,1): omega={w:.3e} alpha={a:.4f} beta={b:.4f} "
       f"persistence={pers:.4f} half-life={half:.1f}d long-run vol={lrv*100:.2f}% "
       f"logL={-nll:.1f}  N={N}")
 
-thg, nllg = nelder_mead(nll_garch, start(0.02, 0.85, 0.10), args=(r, True))
-wg = np.exp(thg[0]); eg = np.exp(np.array([thg[1], thg[2], thg[3], 0.0]))
-ag, gg, bg = eg[0] / eg.sum(), eg[1] / eg.sum(), eg[2] / eg.sum()
+# GJR via arch: the correct GJR stationarity condition is alpha + gamma/2 + beta
+# < 1. The hand-rolled softmax above enforces the tighter alpha + gamma + beta
+# < 1, which pins the GJR fit onto that boundary (a spurious optimum with a
+# lower likelihood and an understated asymmetry); fitting with arch removes the
+# artifact (ERRATA F9 / audit K2).
+from arch import arch_model
+_res = arch_model(r * 100, p=1, o=1, q=1, vol="GARCH", dist="normal", mean="Zero").fit(disp="off")
+_p = _res.params
+wg = _p["omega"] / 1e4
+ag, gg, bg = _p["alpha[1]"], _p["gamma[1]"], _p["beta[1]"]
+nllg = -(_res.loglikelihood + N * np.log(100.0))   # rescale %-returns -> decimal
 persg = ag + gg / 2 + bg
 print(f"GJR-GARCH : omega={wg:.3e} alpha={ag:.4f} gamma={gg:.4f} beta={bg:.4f} "
       f"persistence={persg:.4f} logL={-nllg:.1f}  LR stat={2 * (nll - nllg):.1f}")

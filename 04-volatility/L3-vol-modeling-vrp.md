@@ -209,7 +209,7 @@ Fitted to 3,770 daily S&P returns (demeaned, 2011–2026), the maximum-likelihoo
 
 Panel (a) of Figure 2 shows the fitted conditional-volatility path tracking the clusters and then decaying geometrically between them — the visual signature of the GARCH recursion.
 
-![GARCH(1,1) and GJR-GARCH(1,1) fitted to S&P 500 daily returns by own Gaussian maximum likelihood (Nelder–Mead, softmax-constrained), 2011–2026. Panel (a): the GARCH(1,1) conditional volatility against absolute returns, rising into clusters and decaying geometrically out of them. Panel (b): the news-impact curves — GARCH is symmetric in the sign of yesterday's return, while GJR lifts the response to negative returns, capturing the leverage effect. Reproduce with figures/fig_garch_fit.py.](figures/fig_garch_fit.png)
+![GARCH(1,1) fitted to S&P 500 daily returns by own Gaussian maximum likelihood (Nelder–Mead, softmax-constrained) and GJR-GARCH(1,1) fitted by maximum likelihood under the correct GJR stationarity condition (via `arch`), 2011–2026. Panel (a): the GARCH(1,1) conditional volatility against absolute returns, rising into clusters and decaying geometrically out of them. Panel (b): the news-impact curves — GARCH is symmetric in the sign of yesterday's return, while GJR lifts the response to negative returns, capturing the leverage effect. Reproduce with figures/fig_garch_fit.py.](figures/fig_garch_fit.png)
 
 ### 3.3 Asymmetry: GJR and EGARCH
 
@@ -219,7 +219,7 @@ Plain GARCH has a symmetry that the data reject: through ε²_{t−1} it reacts 
 σ²_t = ω + α · ε²_{t−1} + γ · 1{ε_{t−1} < 0} · ε²_{t−1} + β · σ²_{t−1}
 ```
 
-so a negative return contributes α+γ where a positive one contributes only α. Fitting GJR the same way gives ω = 4.74×10⁻⁶, α = 0.051, γ = 0.139, β = 0.810: the leverage coefficient γ is *larger than the symmetric coefficient* α, meaning a down day drives next-day variance almost four times as hard as an up day of the same size. The improvement is decisive — the log-likelihood rises to 12,638.8, a likelihood-ratio statistic of 102.4 against the one-parameter restriction γ = 0, which is off the chart of any χ²₁ distribution (the 0.1% critical value is 10.8). Panel (b) of Figure 2 draws the two *news-impact curves* — next-day volatility as a function of yesterday's return — and the GJR curve's leftward lift is the leverage effect made visible.
+so a negative return contributes α+γ where a positive one contributes only α. Fitting GJR gives ω = 3.91×10⁻⁶, α = 0.027, γ = 0.232, β = 0.816: the leverage coefficient γ is many times *larger than the symmetric coefficient* α, meaning a down day drives next-day variance about **nine to ten times** (≈9.7×) as hard as an up day of the same size. The improvement is decisive — the log-likelihood rises to 12,658.4, a likelihood-ratio statistic of 141.6 against the one-parameter restriction γ = 0, which is off the chart of any χ²₁ distribution (the 0.1% critical value is 10.8). (An earlier revision reported α = 0.051, γ = 0.139, β = 0.810 and only a 3.7× asymmetry; that fit sat on a softmax constraint α+γ+β<1, tighter than the correct GJR stationarity condition α+γ/2+β<1, which pinned the estimate to the boundary and understated the leverage. The corrected fit uses the proper condition — via `arch` — and has the higher likelihood; see ERRATA.) Panel (b) of Figure 2 draws the two *news-impact curves* — next-day volatility as a function of yesterday's return — and the GJR curve's leftward lift is the leverage effect made visible.
 
 Nelson's (1991) *EGARCH* models the log-variance instead:
 
@@ -494,7 +494,7 @@ Every substantive claim in this paper rests on one of three kinds of basis, dist
 | Claim / result | Basis |
 |---|---|
 | Five realized-volatility estimators on 15 years of S&P OHLC: close-to-close 14.35% versus Yang–Zhang 12.54%, range estimators biased low by the overnight gap | Own reproducible computation — `figures/fig_rv_estimators.py` |
-| Own maximum-likelihood GARCH(1,1)/GJR fit: persistence 0.960, half-life 16.8 days, GJR leverage γ > α (likelihood ratio 102.4) | Own reproducible computation — `figures/fig_garch_fit.py` |
+| Own maximum-likelihood GARCH(1,1)/GJR fit: persistence 0.960, half-life 16.8 days, GJR leverage γ ≫ α, asymmetry ≈9.7× (likelihood ratio 141.6) | Own reproducible computation — `figures/fig_garch_fit.py` |
 | Out-of-sample forecasting horse race: QLIKE HAR 0.377 < GARCH 0.405 < random walk 0.685, with MSE reversing the HAR/GARCH order | Own reproducible computation — `figures/fig_har_oos.py`; OOS split |
 | Variance risk premium +6.98 %²/month, 84.6% hit rate, ~3.7 vol points; in-sample t 7.31 but out-of-sample t only 0.92 | Own reproducible computation — `figures/fig_vrp.py`; OOS split |
 | Arbitrage-free raw-SVI calibration to a 29-day SPX slice: RMSE 0.14 vol points, butterfly g(k) minimum +0.041, no calendar arbitrage | Own reproducible computation — `figures/fig_svi_fit.py` |
