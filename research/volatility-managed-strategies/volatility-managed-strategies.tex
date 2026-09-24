@@ -245,9 +245,7 @@ same standard as the strategy, we compute a Model Confidence Set\cf{Hansen, Lund
 classical ladder models $\{$RW, EWMA, AR(1), HAR, HAR-CJ, HAR-RS, HARQ, LHAR, log-HAR, HAR-IV$\}$.
 The $90\,\%$ MCS is $\{$HAR-IV$\}$ alone --- every simpler model is excluded at $p<0.01$, so HAR-IV
 is the unambiguous \emph{classical} winner. Admitting the rich-feature/ML models widens the set: the
-$90\,\%$ MCS becomes $\{$Lasso, ElasticNet, HAR-CJ$\}$ and \textbf{HAR-IV is excluded at $p=0.013$}.
-We report this openly --- the feature family genuinely displaces HAR-IV on QLIKE --- but do not build
-the sizing rule on it, precisely because that QLIKE win rides the $-65\,\%$ MSE-$R^2$ of Lasso~(c).
+$90\,\%$ MCS \emph{appears} to widen to $\{$Lasso, ElasticNet, HAR-CJ$\}$ with \textbf{HAR-IV excluded at $p=0.013$} --- but this second run is computed on a \emph{different} loss matrix (the unfiltered \texttt{loss\_matrix\_classical}, on which the same model names carry different QLIKE: HAR-CJ 0.564 vs.\ 0.256, LHAR 1.852 vs.\ 0.684), so the two MCS statements are not directly comparable. That run is moreover \emph{degenerate}: HAR-CJ (QLIKE 0.564, second-worst) sits inside the set while HAR-IV (0.204, third-best) is outside --- an unstable MCS on this matrix, not a genuine displacement (on the unfiltered matrix without the ML columns the $90\,\%$ set is simply $\{$HAR-IV$\}$). We therefore do not read it as the feature family displacing HAR-IV, and do not build the sizing rule on it, both because that QLIKE win rides the $-65\,\%$ MSE-$R^2$ of Lasso~(c) and because the comparison is not apples-to-apples.
 
 \emph{(f) The one genuinely new candidate: a QLIKE-native GLM with the VIX term-structure slope.}
 Adding the log VIX3M/VIX slope to HAR-IV and fitting it with a Gamma-GLM (log link) --- that is,
@@ -257,7 +255,7 @@ a retransform --- reaches QLIKE 0.1959 ($-4\,\%$ versus HAR-IV) while \emph{also
 Diebold-Mariano $p=0.0008$ and a lower QLIKE in both sub-periods. It clears the same acceptance gates
 as the confirmatory result --- but as a \emph{post-hoc, exploratory} specification (developed after
 observing the QLIKE/MSE mismatch, and judged on Diebold-Mariano rather than the pre-registered
-Clark-West), so its $p$-value is not a nominal confirmatory one. It is the concrete payoff of
+Clark-West), so its $p$-value is not a nominal confirmatory one. Under the pre-registered Clark-West test it does \emph{not} clear the bar: CW gives $p\approx0.027$ against the HAR-IV baseline ($\approx0.037$ against the correct nesting parent), both above the Bonferroni-adjusted threshold $0.05/6\approx0.0083$ the confirmatory arm uses; the $p=0.0008$ figure comes from Diebold-Mariano's different reference distribution, not null-calibrated for a (near-)nested pair. It is the concrete payoff of
 coupling the estimator to the evaluation loss --- the fix for the fragility flagged in~(c) --- and
 remains a candidate, not \texttt{supported}: like everything here it awaits a live prediction log.
 This, the IV term-structure slope under a loss-matched estimator, is the study's only forecasting
@@ -441,7 +439,7 @@ out-of-sample.}
 
 Walk-forward parameter selection resolves the well-known overfitting paradox of volatility
 management at the family level: the fixed in-sample-best VMG parametrization is overfit
-(PBO~$=0.79$ for HAR-IV, $0.75$ for log-HAR; \texttt{thesis\_validation.csv}),\cf{Consistent with Cederburg, O'Doherty, Wang \& Yan (2020).} yet the family, honestly re-selected,
+(PBO~$=0.79$ for HAR-IV, $0.75$ for log-HAR on SPX; \texttt{thesis\_validation.csv} --- though the same file reports PBO~$=0.365$ on NDX, so this overfitting flag is market-specific, a caveat the SPX-only headline should carry),\cf{Consistent with Cederburg, O'Doherty, Wang \& Yan (2020).} yet the family, honestly re-selected,
 delivers a positive walk-forward Sharpe. The combination then looks good on paper
 (Table~4).
 
@@ -476,7 +474,7 @@ $\approx6.5\,\%$ volatility versus $\approx17\,\%$ for buy-and-hold; normalized 
 the drawdown advantage shrinks toward parity, and single-market VMG alone matches or beats the
 combination on vol-matched Calmar. We therefore report no tradeable edge.
 
-\emph{Cost stress and the graveyard.} VMG and VIXTS survive five basis points; the cost-fragile
+\emph{Cost stress and the graveyard.} VMG and VIXTS survive five basis points --- though VIXTS survives the \emph{cost} stress, not its own hypothesis: the pre-registered Q015 (VIX-term-structure sizing improving Calmar by $+0.05$ to $+0.15$) reaches only $\Delta$Calmar~$\approx+0.023$ at its best grid point, with four of six grid points negative, so it misses its pre-registered band and is recorded \emph{not supported}; and Q012 (TSMOM, correlation $<0.5$ to VMG) measures $0.751$, violating its own condition. The cost-fragile
 families die where they should --- overnight carry collapses to Sharpe $-2.38$ at five basis points
 despite a real gross anomaly ($+7.3\,\%$/yr overnight versus $+6.4\,\%$ intraday). Reported failures in
 full: long/short momentum ($-52\,\%$ SPX drawdown; the $-68\,\%$ sometimes quoted was the DAX sleeve in the earlier cross-market version), turn-of-month (a single-market artifact), net overnight
