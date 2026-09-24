@@ -249,8 +249,23 @@ with a 21-test reproducing suite (21/21, 119/119 checks, deterministic).
   ≈4,290 (3,300 was Siegmund without the continuity correction); the four detection
   metrics are unaffected.
 
-### Still open (research package — volatility-managed-strategies)
+### K (research package — volatility-managed-strategies, applied)
 
-- **K11 · MCS on two loss matrices** (§3e), **C4 under Clark-West** vs the Bonferroni
-  threshold, the **Q015/Q012** pre-registration handling, and the **diversification-ratio
-  1.8** figure are acknowledged and pending a dedicated correction pass.
+- **K11 · MCS on two loss matrices** (§3e): the ML-MCS run is computed on a different loss matrix
+  than the classical one (same model names, different QLIKE — HAR-CJ 0.564 vs 0.256, LHAR 1.852 vs
+  0.684) and is degenerate (HAR-CJ, second-worst, inside the 90% set; HAR-IV, third-best, outside).
+  §3e now says the two runs are not comparable and no longer reads it as a displacement.
+- **C4 under Clark-West** (§3f): the Gamma-GLM candidate fails the pre-registered Clark-West test
+  against its Bonferroni threshold (CW p ≈ 0.027 vs baseline, 0.037 vs the nesting parent; both
+  above 0.05/6 ≈ 0.0083). §3f now states this; it was already marked exploratory/candidate.
+- **Q015 / Q012** (§6.3): Q015 (VIXTS Calmar target +0.05–0.15) misses its band (best ΔCalmar
+  ≈ +0.023, four of six grid points negative) → recorded not supported; Q012 (TSMOM, corr < 0.5 to
+  VMG) measures 0.751, violating its condition. Both now in the graveyard with verdicts.
+- **Diversification ratio** (§9.2): corrected from ≈ 1.8 to ≈ 1.3 (1.25–1.47); the 1.8 is not
+  reproducible from the result files.
+- **V-09 · NDX-PBO** (§6.2): the same `thesis_validation.csv` reports PBO 0.365 on NDX, so the
+  SPX overfitting flag is market-specific — now stated.
+
+**Note on the research paper PDF:** the `.md` corrections above are applied. This paper's PDF is
+built with a LaTeX (pandoc/xelatex) pipeline; rebuild it from the corrected markdown with that
+pipeline so the PDF carries the corrected numbers.

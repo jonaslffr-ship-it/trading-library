@@ -177,11 +177,7 @@ same standard as the strategy, we run a Model Confidence Set (Hansen, Lunde & Na
 loss, stationary block bootstrap, 1,000 reps, block 10, seed 42) over the ten classical ladder
 models {RW, EWMA, AR(1), HAR, HAR-CJ, HAR-RS, HARQ, LHAR, log-HAR, HAR-IV}. The **90 % MCS is
 {HAR-IV} alone** — every simpler model is excluded at p < 0.01, so HAR-IV is the unambiguous
-*classical* winner. Admitting the rich-feature/ML models widens the set: the 90 % MCS becomes
-**{Lasso, ElasticNet, HAR-CJ}** and **HAR-IV is excluded at p = 0.013** (`paper_fills_mcs`,
-`paper_fills_ml`). We report this openly — the feature family genuinely displaces HAR-IV on QLIKE
-— but we do not build the sizing rule on it precisely because that QLIKE win rides a −65 % MSE-R²
-(c); the classical MCS is the honest frontier for a robust point forecast.
+*classical* winner. Admitting the rich-feature/ML models appears to widen the set, but this second run is **not directly comparable to the classical one**: it is computed on a *different loss matrix* (the unfiltered `loss_matrix_classical`, on which the same model names carry different QLIKE values — HAR-CJ 0.564 here vs. 0.256 on the filtered ladder, LHAR 1.852 vs. 0.684), so the two MCS statements cannot simply be juxtaposed. On that matrix the 90 % MCS is reported as **{Lasso, ElasticNet, HAR-CJ}** with **HAR-IV excluded at p = 0.013** (`paper_fills_mcs`, `paper_fills_ml`) — but the run is **degenerate**: HAR-CJ (QLIKE 0.564, the *second-worst* model) sits inside the set while HAR-IV (0.204, third-best) is outside, which is a symptom of an unstable MCS on this matrix, not a genuine displacement. On the unfiltered matrix *without* the ML columns the 90 % set is simply {HAR-IV}. We therefore do **not** read this as the feature family displacing HAR-IV; it is a fragile, matrix-dependent result, and we do not build the sizing rule on it — both because that QLIKE win rides a −65 % MSE-R² (c) and because the comparison itself is not apples-to-apples. The classical MCS is the honest frontier for a robust point forecast.
 
 **(f) The one genuinely new candidate: a QLIKE-native GLM with the VIX term-structure slope.**
 Adding the log VIX3M/VIX slope to HAR-IV and fitting it with a **Gamma-GLM (log link)** — i.e.
@@ -193,7 +189,11 @@ not the only one — C1 (HAR-IV + slope) and C3 also lower both QLIKE and MSE �
 that couples the estimator to the loss. It clears the same acceptance gates
 our confirmatory result used — but as a **post-hoc, exploratory** specification (developed after
 seeing the QLIKE/MSE mismatch, and judged on Diebold-Mariano rather than the pre-registered
-Clark-West), so its p-value is not a nominal confirmatory one. It is the concrete payoff of
+Clark-West), so its p-value is not a nominal confirmatory one. Under the pre-registered Clark-West
+test it does **not** clear the bar: CW gives p ≈ 0.027 against the HAR-IV baseline (≈ 0.037 against
+the correct nesting parent), both above the Bonferroni-adjusted threshold of 0.05/6 ≈ 0.0083 that
+the confirmatory arm uses. The DM p = 0.0008 comes from DM's different reference distribution,
+which is not null-calibrated for a (near-)nested pair — the reason C4 is marked exploratory here. It is the concrete payoff of
 coupling the estimator to the evaluation loss — the fix for the fragility flagged in (c) — and
 it remains a **candidate, not `supported`**: like everything here it awaits a live prediction
 log (§9). This — the IV term-structure slope under a loss-matched estimator — is the study's only
@@ -272,8 +272,9 @@ ranks below median out-of-sample.*
 
 Walk-forward parameter selection resolves the well-known overfitting paradox of volatility
 management at the *family* level: the fixed in-sample-best VMG parametrization is overfit
-(PBO = 0.79 for the HAR-IV family, 0.75 for log-HAR; `thesis_validation.csv`; consistent with
-Cederburg et al. 2020), yet the family, honestly re-selected, delivers a positive walk-forward
+(PBO = 0.79 for the HAR-IV family, 0.75 for log-HAR **on SPX**; `thesis_validation.csv`; consistent with
+Cederburg et al. 2020 — though the same file reports **PBO = 0.365 on NDX**, so this overfitting flag is
+market-specific, not universal, a caveat the SPX-only headline should carry), yet the family, honestly re-selected, delivers a positive walk-forward
 Sharpe. So far, so encouraging. The combination then looks good on paper:
 
 | Metric (net, OOS, SPX) | Best combo | VMG (single) | Buy & Hold |
@@ -312,11 +313,11 @@ disqualified our best-looking result.
 
 ### 6.3 Cost stress and the graveyard
 
-Cost stress behaves as it should: VMG and VIXTS survive 5 bp; the cost-fragile families die
+Cost stress behaves as it should: VMG and VIXTS survive 5 bp — but VIXTS survives the *cost* stress, not its own hypothesis. The pre-registered **Q015** (VIX-term-structure sizing improving Calmar by +0.05–0.15) reaches only ΔCalmar ≈ **+0.023** at its best grid point, with four of six grid points negative, so it **misses its pre-registered band and is recorded as not supported** even as the sleeve keeps a place in the top combinations. The cost-fragile families die
 where they should — **overnight carry collapses to Sharpe −2.38 at 5 bp** despite a real gross
 anomaly (+7.3 %/yr overnight vs. +6.4 % intraday). Reported failures in full: long/short
 momentum (**−52 % SPX drawdown**; the −68 % figure sometimes quoted was the DAX sleeve in the
-earlier cross-market version), turn-of-month (single-market artifact, absent structure), net
+earlier cross-market version), turn-of-month (single-market artifact, absent structure), the pre-registered TSMOM diversifier (**Q012**, which required correlation < 0.5 to VMG but measures **0.751**, violating its own condition), net
 overnight carry, and a six-test mechanism battery (H-A0…H-C1) in which **only HAR-IV (implied
 volatility helps, Clark-West p = 0.019) carried evidence** — the other five (conditional variance
 risk premium → forward returns; a VRP gate on the sizing rule; a downside-semivariance return
@@ -474,7 +475,8 @@ VIX3M-conditioned sleeve begins slightly later.
    real by our gates, but unconfirmed absent a live log.
 2. **The strategy is beta management at best, and here not even that survives selection.** No
    short book, no market-neutral source; on one market the diversification argument is thin
-   (pairwise sleeve correlations 0.27–0.79; diversification ratio ≈ 1.8 — real but modest, not the
+   (pairwise sleeve correlations 0.27–0.79; diversification ratio ≈ 1.3 (1.25–1.47 across plausible definitions; the 1.8 in an
+   earlier draft is not reproducible from the result files) — real but modest, not the
    genuine breadth the sleeve count suggests).
 3. **Statistical honesty about ranks and differences.** DSR of the leaders is high only because
    restricting to SPX shrinks the trial count (227 → 73); we report this openly and rest the
