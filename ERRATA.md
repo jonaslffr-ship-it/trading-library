@@ -105,6 +105,11 @@ its PNG was regenerated so text and figure agree.
   premium made visible." Most of the gap is the fat-tailed shape of returns — a
   fairly priced standardized t(4) already lands 77.0% inside, t(5) 74.7% — and
   only the residual over ~75% is premium. Caveat added to the abstract and §7.4.
+  **[Superseded by K1 (v1.1): the t(4)/t(5) figures use the *unconditional* kurtosis
+  of raw returns, but the test standardizes each day by its own VIX sigma, so the
+  correct baseline is the *conditional* VIX-standardized distribution (≈71.9%). The
+  premium is therefore the *larger* part — ≈9.5 of the 13.1 excess points, not the
+  residual. Abstract, §7.4 and §9 rewritten.]**
 - **C2 · Volatility Fundamentals — rule of 16.** The +0.79% error of 16 against
   √252 = 15.87 is now quantified where the shortcut is introduced.
 - **C3 · Vol Modeling & VRP — DM vs Clark–West.** The Diebold–Mariano statistic
@@ -155,10 +160,97 @@ its PNG was regenerated so text and figure agree.
   `fig_monitoring.py` reproduces all four metrics from a single CUSUM (k = 0.20σ,
   h = 14σ, ARL₀ ≈ 3,300) over 5,000 seeded paths, because the shift to detect is
   small (0.41σ). The inconsistency claim did not reproduce; only the
-  missing-parameters point was valid (fixed in A11).
+  missing-parameters point was valid (fixed in A11). **[The ARL₀ ≈ 3,300 quoted
+  here is itself the Siegmund large-deviation approximation *without* the
+  continuity correction; the exact in-control ARL₀ for this discrete CUSUM is
+  ≈ 4,290 (collocation + Monte Carlo). Corrected in §5.4 as K-M04 (v1.1). The four
+  detection metrics are unaffected.]**
 - **Committed raw vendor caches** (CBOE/optionsDX JSON/CSV under `figures/data/`)
   should be replaced by fetch-at-runtime scripts plus checksums — a follow-up
   item, deferred rather than deleted now so the current figures still build.
 - **Per-paper "missing building block" suggestions** (execution-cost boxes,
   bucketed exposure, production runbooks, and similar) are enhancement ideas, not
   errors, and are outside this correction pass.
+
+## v1.1 (2026-09-24) — corrections from a second external audit
+
+A second independent audit re-ran the repository at v1.0 (tag `v1.0` = 2469ade)
+with a 21-test reproducing suite (21/21, 119/119 checks, deterministic).
+
+### F. Infrastructure & packaging (applied)
+
+- **F1/F3 · Cache poisoning + offline SKIP.** The seven CBOE-chain figure scripts
+  wrote the cache *before* the network read, so a failed fetch left a 0-byte file
+  the `os.path.exists` guard then trusted forever. They now validate JSON, write
+  atomically (`.part` + `os.replace`), and emit a clean `SKIPPED` line offline.
+- **F2 · Data-redistribution claim.** README/LICENSE now distinguish the free CBOE
+  *daily-history* CSVs (included) from the licensed *intraday chains* (git-ignored).
+- **F4 · verify_repro.sh exit code.** `exit $((fail>0))` so `make verify`/CI can no
+  longer stay green on a real reproduction failure; per-figure timeout 60→180 s.
+- **F5 · requirements.txt** pins the audited environment (Python 3.11).
+- **F6 · prove_fixes.py** now opens the papers (A1/A10/C6), so reverting a corrected
+  number in the prose turns it red (previously it re-derived arithmetic only).
+- **F7 · LICENSE** no longer references nonexistent tracks 02/06; `NOTICE.md` added.
+- **F8 · Missing modules.** `research/.../strategy.py` and `paper_review_fixes.py`
+  were referenced by five package modules but absent; both restored.
+- **F9 · GJR optimizer** (`fig_garch_fit.py`) now fits via `arch` under the correct
+  GJR stationarity condition (see K2).
+- **F10 · CPI YoY** (`fig_e1_*.py`) now computed calendar-based, not position-based
+  (see K9).
+
+### K. Content corrections (applied)
+
+- **K1 · Volatility Fundamentals — errata C1 corrected the wrong way.** C1 used the
+  *unconditional* t(4)/t(5) coverage (77.0%/74.7%) as the fair baseline, but the test
+  standardizes each day by its own VIX sigma, so the correct comparison is the
+  *conditional* VIX-standardized distribution (excess kurtosis ≈ 1.4, fair coverage
+  ≈ 71.9%). Of the 13.1-point over-coverage ≈ 3.7 are fat tails and ≈ 9.5 the variance
+  risk premium — the premium is the *larger* part. Abstract, §7.4, §9.
+- **K2 · Vol Modeling & VRP — GJR fit on the constraint boundary.** The softmax
+  enforced α+γ+β<1 (tighter than the correct GJR condition α+γ/2+β<1), pinning the fit
+  to the boundary (α=0.051, γ=0.139, β=0.810, 3.7×, logL 12,638.8). The correct fit
+  (via `arch`): α=0.027, γ=0.232, β=0.816, asymmetry ≈9.7×, logL 12,658.4 (LR 141.6).
+  §3.3, caption, evidence; figure regenerated.
+- **K3 · Model-to-Trade — OOS Sharpe 1.24.** §7.3 now carries the bootstrap 95% CI
+  ≈ [0.39; 2.64], the single-month dependence (with March 2020 → ≈0.09; no other month
+  moves it >0.07), and the break-even cost (−0.0015 ≈ 3.5% of variance sold; edge gone
+  at a realistic 0.008).
+- **K4 · Dealer Flows / GEX — "0.1% agree" reassurance.** §4.4 now states the 0.1%
+  median is near-the-money only, and that +$5.4 bn (all live contracts) vs −$28 bn
+  (filtered `live & iv>0.01 & oi>0`, `max(dte,1)/365`) are different populations under
+  different time conventions — so both sign and magnitude of the net are model choices.
+- **K5 · Greeks & Hedging — charm "four times".** §8.2 corrected to ≈2.2× (OTM) /
+  ≈2.9× (ITM) for the *same* option; the 4× compared different moneyness across
+  maturities. Caption updated.
+- **K6 · Backtesting — the only backtest.** §2.6 now reports the gross Sharpe 0.41 is
+  not significant (σ_SR ≈ 0.26, t ≈ 1.6, p ≈ 0.11, 95% CI [−0.09, 0.92]). Evidence updated.
+- **K7 · Overfitting — σ_SR = √(252/T).** §2.1 now names the iid assumption, forward-
+  references the §3.1 Lo (2002) autocorrelation correction, and states the measured
+  ρ₁ ≈ −0.11.
+- **K8 · Macro Regimes — NFCI>1 crisis extreme.** §4.2 now discloses the cell is ~90%
+  pre-1990 (341/378 weeks, +0.334%), 2008–09 is 37 weeks (−2.129%), and March 2020
+  peaked at NFCI ≈ 0.27 and never entered it; on the modern subsample the extreme does
+  foreshadow weakness.
+- **K9 · Macro Foundations — CPI YoY.** The three L1 figure scripts computed YoY
+  position-based (`v[12:]/v[:-12]`), which over the un-published Oct-2025 gap gave
+  ≈3.71% for Aug-2026 instead of ≈3.35% and contradicted the L2 dashboard. Now
+  calendar-based; figures regenerated (F10).
+- **K10 · Tail-Hedging — skew acts on both sides.** §5.2/§6 now state flat-VIX pricing
+  flatters the overlay on both axes; the ×8,800 crash multiple is a resting-value
+  denominator artefact (≈×251 vs entry premium); a naked put's loss is bounded by the
+  strike (≈95 per 100), only the call side is unbounded.
+- **K13 · Paper-to-Strategy — replication prior.** §3.4 now carries the published
+  counter-position: Chen & Zimmermann (CFR 2022), ~100% replication over 319 predictors,
+  disputing the Hou-Xue-Zhang classification; both priors shown (8% → ~25%). Reference added.
+- **K14 · How Markets Move — the third possibility.** §3.1 now names internalisation /
+  PFOF (retail orders filled off-book by wholesalers) alongside the batch auction, and
+  flags the 2024 Reg NMS sub-penny tick change.
+- **K-M04 · Building/Running/Killing Algos — ARL₀.** §5.4 corrected from ≈3,300 to
+  ≈4,290 (3,300 was Siegmund without the continuity correction); the four detection
+  metrics are unaffected.
+
+### Still open (research package — volatility-managed-strategies)
+
+- **K11 · MCS on two loss matrices** (§3e), **C4 under Clark-West** vs the Bonferroni
+  threshold, the **Q015/Q012** pre-registration handling, and the **diversification-ratio
+  1.8** figure are acknowledged and pending a dedicated correction pass.
