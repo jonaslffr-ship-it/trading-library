@@ -1,0 +1,13 @@
+# Trading Library — reproducibility environment (ERRATA F5).
+# Pinned to the versions documented in the external audit's ENV.txt (Python 3.11).
+# The committed figures reproduce byte-identically under this set; nearby
+# patch/minor versions also reproduce (independently verified on numpy 2.4.2 /
+# pandas 2.3.3 / scikit-learn 1.9.1 / pyarrow 23.0.1 / matplotlib 3.10.8).
+numpy==2.4.4
+scipy==1.17.1
+pandas==3.0.2
+arch==8.0.0
+statsmodels==0.15.0
+scikit-learn==1.8.0
+pyarrow==25.0.1
+matplotlib==3.10.9

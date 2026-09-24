@@ -39,13 +39,30 @@ R, Q = 0.04, 0.01
 
 
 def load_chain():
-    if not os.path.exists(CACHE):
+    """Robust cached loader (ERRATA F1/F3): validate before writing, write
+    atomically, and SKIP cleanly when the licensed snapshot is unavailable
+    offline instead of poisoning the cache with a 0-byte file."""
+    if os.path.exists(CACHE) and os.path.getsize(CACHE) > 0:
+        try:
+            with open(CACHE) as f:
+                return json.load(f)
+        except (ValueError, OSError):
+            pass
+    try:
         socket.setdefaulttimeout(60)
         req = urllib.request.Request(URL, headers={"User-Agent": "Mozilla/5.0"})
         raw = urllib.request.urlopen(req).read()
-        with open(CACHE, "wb") as f:
+        obj = json.loads(raw)
+        tmp = CACHE + ".part"
+        with open(tmp, "wb") as f:
             f.write(raw)
-    return json.load(open(CACHE))
+        os.replace(tmp, CACHE)
+        return obj
+    except Exception as e:
+        print("SKIPPED: needs the licensed CBOE option-chain snapshot "
+              f"({os.path.basename(CACHE)}), not redistributed; offline fetch "
+              f"failed ({type(e).__name__}). See ERRATA F.")
+        raise SystemExit(0)
 
 
 def parse(chain):

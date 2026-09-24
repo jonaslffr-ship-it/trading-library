@@ -44,6 +44,11 @@ import matplotlib.pyplot as plt
 HERE = os.path.dirname(os.path.abspath(__file__))
 CACHE = os.path.join(HERE, "data", "SPX_options_snapshot.json")
 
+if not (os.path.exists(CACHE) and os.path.getsize(CACHE) > 0):
+    print("SKIPPED: needs the licensed CBOE snapshot (SPX_options_snapshot.json), "
+          "created by fig_iv_surface.py from vendor data not redistributed; "
+          "unavailable offline. See ERRATA F.")
+    raise SystemExit(0)
 with open(CACHE) as f:
     j = json.load(f)
 snap_time = j["timestamp"]

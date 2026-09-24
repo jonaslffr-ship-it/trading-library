@@ -26,4 +26,8 @@ while IFS= read -r f; do
 done < <(find . -path '*/figures/*.py' -not -path './.git*' | sort)
 echo "================================================================"
 echo "RESULT: total=$total  ok=$ok  skipped=$skip  fail=$fail"
-echo "(skipped = needs private data, disclosed in the caption; not reproducible by design)"
+echo "(skipped = needs licensed or private data, disclosed in the caption/script; not reproducible offline by design)"
+# ERRATA F4: fail the whole chain when any figure script actually FAILS (as
+# opposed to a declared SKIP), so `make verify` / CI can no longer stay green
+# on a real reproduction failure.
+exit $(( fail > 0 ))
