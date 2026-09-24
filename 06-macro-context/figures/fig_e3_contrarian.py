@@ -52,12 +52,32 @@ B = 4000               # bootstrap resamples
 
 
 def fetch(url, path):
+    """Cache url -> path. Read into memory first, validate non-empty, then
+    write atomically via a .part temp, so a failed/offline fetch never leaves
+    a 0-byte or partial cache behind (ERRATA cache-poison). Raises on failure."""
     if os.path.exists(path) and os.path.getsize(path) > 0:
         return
     socket.setdefaulttimeout(60)
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with open(path, "wb") as f:
-        f.write(urllib.request.urlopen(req).read())
+    raw = urllib.request.urlopen(req).read()
+    if not raw:
+        raise ValueError("empty response")
+    tmp = path + ".part"
+    with open(tmp, "wb") as f:
+        f.write(raw)
+    os.replace(tmp, path)
+
+
+def ensure(url, path):
+    """fetch(); on offline failure with no usable cache, SKIP cleanly instead
+    of crashing or trusting a poisoned cache."""
+    try:
+        fetch(url, path)
+    except Exception as e:
+        if not (os.path.exists(path) and os.path.getsize(path) > 0):
+            print(f"SKIPPED (offline / no cache): {os.path.basename(path)} - "
+                  f"{type(e).__name__}: {e}")
+            raise SystemExit(0)
 
 
 # ---------- loaders (cached; read-only reuse of the shared caches) ----------
@@ -74,7 +94,7 @@ def load_spx():
 
 def load_vix():
     path = os.path.join(DATA, "vix_history.csv")
-    fetch("https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv", path)
+    ensure("https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv", path)
     out = {}
     with open(path) as f:
         for row in csv.DictReader(f):
@@ -88,7 +108,7 @@ def load_vix():
 
 def load_pc_ma(window=21):
     path = os.path.join(DATA, "equitypc.csv")
-    fetch("https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/equitypc.csv", path)
+    ensure("https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/equitypc.csv", path)
     raw = {}
     with open(path) as f:
         for row in csv.reader(f):
@@ -122,6 +142,9 @@ def load_cot(code="13874A"):
             if r[3].strip() == code:
                 rows[r[2].strip()] = 100.0 * (float(r[8]) - float(r[9])) / float(r[7])
     ds = sorted(rows)
+    if not ds:
+        print("SKIPPED (offline / no cache): CFTC COT history (data/cot/) unavailable")
+        raise SystemExit(0)
     return ds, np.array([rows[d] for d in ds])
 
 

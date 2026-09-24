@@ -6,7 +6,7 @@ This library is a set of original scientific papers written by Jonas Löffler (`
 
 > **Disclaimer.** These are research and educational documents, **not investment advice**, not a recommendation or solicitation to trade any security, and not a statement of the views of any employer. Any rule or threshold shown (e.g. a volatility cut-off) is an illustration of a method, not a signal to act on. Trading options and derivatives involves substantial risk of loss. You are responsible for your own decisions.
 
-**Version & corrections.** Series **v1.0** (2026-09-20). Found errors are fixed in the open — see [CHANGELOG.md](CHANGELOG.md) and [ERRATA.md](ERRATA.md). Licensing: papers and figures under [CC BY 4.0](LICENSE); code under [MIT](LICENSE-CODE).
+**Version & corrections.** Series **v1.1** (2026-09-24). Found errors are fixed in the open — see [CHANGELOG.md](CHANGELOG.md) and [ERRATA.md](ERRATA.md). Licensing: papers and figures under [CC BY 4.0](LICENSE); code under [MIT](LICENSE-CODE).
 
 ## Difficulty badges
 

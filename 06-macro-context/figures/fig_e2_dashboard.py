@@ -24,12 +24,22 @@ START = 2000.0
 
 def fred(series):
     cache = os.path.join(DATA, f"fred_{series}.csv")
-    if not os.path.exists(cache):
-        socket.setdefaulttimeout(60)
-        url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with open(cache, "wb") as f:
-            f.write(urllib.request.urlopen(req).read())
+    if not (os.path.exists(cache) and os.path.getsize(cache) > 0):
+        try:
+            socket.setdefaulttimeout(60)
+            url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            raw = urllib.request.urlopen(req).read()
+            if not raw:
+                raise ValueError("empty response")
+            tmp = cache + ".part"
+            with open(tmp, "wb") as f:
+                f.write(raw)
+            os.replace(tmp, cache)
+        except Exception as e:
+            print(f"SKIPPED (offline / no cache): {os.path.basename(cache)} - "
+                  f"{type(e).__name__}: {e}")
+            raise SystemExit(0)
     d, v = [], []
     with open(cache) as f:
         rdr = csv.reader(f)

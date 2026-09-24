@@ -26,11 +26,21 @@ DATA = os.path.join(HERE, "data")
 os.makedirs(DATA, exist_ok=True)
 URL = "https://cdn.cboe.com/api/global/us_indices/daily_prices/SKEW_History.csv"
 path = os.path.join(DATA, "SKEW_History.csv")
-if not os.path.exists(path):
-    socket.setdefaulttimeout(60)
-    req = urllib.request.Request(URL, headers={"User-Agent": "Mozilla/5.0"})
-    with open(path, "wb") as f:
-        f.write(urllib.request.urlopen(req).read())
+if not (os.path.exists(path) and os.path.getsize(path) > 0):
+    try:
+        socket.setdefaulttimeout(60)
+        req = urllib.request.Request(URL, headers={"User-Agent": "Mozilla/5.0"})
+        raw = urllib.request.urlopen(req).read()
+        if not raw:
+            raise ValueError("empty response")
+        tmp = path + ".part"
+        with open(tmp, "wb") as f:
+            f.write(raw)
+        os.replace(tmp, path)
+    except Exception as e:
+        print(f"SKIPPED (offline / no cache): {os.path.basename(path)} - "
+              f"{type(e).__name__}: {e}")
+        raise SystemExit(0)
 
 dates, vals = [], []
 with open(path) as f:

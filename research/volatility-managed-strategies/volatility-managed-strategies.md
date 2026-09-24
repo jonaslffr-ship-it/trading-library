@@ -5,7 +5,7 @@ last_updated: 2026-09-02
 
 # Realized-Volatility Forecasting and Volatility-Managed Sizing on the S&P 500: A Pre-Registered, Walk-Forward, Multiple-Testing-Corrected Study
 
-**Jonas Löffler** · August 2026 · Working paper, v1.0
+**Jonas Löffler** · August 2026 · Working paper, v1.1
 
 > **Research/educational project — not investment advice.** All results are historical
 > simulations net of assumed costs on a price index (no dividends). Code, results and the
@@ -313,7 +313,7 @@ disqualified our best-looking result.
 
 ### 6.3 Cost stress and the graveyard
 
-Cost stress behaves as it should: VMG and VIXTS survive 5 bp — but VIXTS survives the *cost* stress, not its own hypothesis. The pre-registered **Q015** (VIX-term-structure sizing improving Calmar by +0.05–0.15) reaches only ΔCalmar ≈ **+0.023** at its best grid point, with four of six grid points negative, so it **misses its pre-registered band and is recorded as not supported** even as the sleeve keeps a place in the top combinations. The cost-fragile families die
+Cost stress behaves as it should: VMG and VIXTS survive 5 bp — but VIXTS survives the *cost* stress, not its own hypothesis. The pre-registered **Q015** (VIX-term-structure sizing improving Calmar by +0.05–0.15) reaches only ΔCalmar ≈ **+0.023** at its best grid point, with five of six grid points negative, so it **misses its pre-registered band and is recorded as not supported** even as the sleeve keeps a place in the top combinations. The cost-fragile families die
 where they should — **overnight carry collapses to Sharpe −2.38 at 5 bp** despite a real gross
 anomaly (+7.3 %/yr overnight vs. +6.4 % intraday). Reported failures in full: long/short
 momentum (**−52 % SPX drawdown**; the −68 % figure sometimes quoted was the DAX sleeve in the
@@ -472,7 +472,8 @@ VIX3M-conditioned sleeve begins slightly later.
 1. **Forecasting is mostly replication.** log-HAR ≻ RW and HAR-IV are known; our contribution
    there is a clean, leakage-tested, single-market replication with honest tests. The one
    genuine increment is the loss-matched Gamma-GLM with the VIX term-structure slope (§3f) —
-   real by our gates, but unconfirmed absent a live log.
+   it clears the DM gate but *not* the pre-registered Clark-West gate (the honest test for this
+   near-nested pair), so it stays exploratory and unconfirmed absent a live log.
 2. **The strategy is beta management at best, and here not even that survives selection.** No
    short book, no market-neutral source; on one market the diversification argument is thin
    (pairwise sleeve correlations 0.27–0.79; diversification ratio ≈ 1.3 (1.25–1.47 across plausible definitions; the 1.8 in an
@@ -582,5 +583,5 @@ and `rv_nowcast.py` (overnight and intraday same-day channels), `rv_lag_figures.
 `paper_figs_en.py` → `figures/report_en/`. Smoke test without licensed data: `python run.py`
 (synthetic, seed 42). Random seeds fixed (42); data fingerprints in `data/data_manifest.csv`.
 
-*Working paper v1.0, 2026-09-02. Repository and an OSF pre-registration time-stamp are linked
+*Working paper v1.1, 2026-09-02. Repository and an OSF pre-registration time-stamp are linked
 from the release; comments welcome via the repository issue tracker.*

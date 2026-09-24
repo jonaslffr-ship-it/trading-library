@@ -31,12 +31,20 @@ CODE = "13874A"          # E-MINI S&P 500 - CHICAGO MERCANTILE EXCHANGE
 
 
 def fetch(url, path):
-    if os.path.exists(path):
+    """Cache url -> path. Read into memory first, validate non-empty, then
+    write atomically via a .part temp, so a failed/offline fetch never leaves
+    a 0-byte or partial cache behind (ERRATA cache-poison). Raises on failure."""
+    if os.path.exists(path) and os.path.getsize(path) > 0:
         return
     socket.setdefaulttimeout(60)
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with open(path, "wb") as f:
-        f.write(urllib.request.urlopen(req).read())
+    raw = urllib.request.urlopen(req).read()
+    if not raw:
+        raise ValueError("empty response")
+    tmp = path + ".part"
+    with open(tmp, "wb") as f:
+        f.write(raw)
+    os.replace(tmp, path)
 
 
 def load_cot(code):
@@ -59,6 +67,9 @@ def load_cot(code):
             oi = float(r[7]); lo = float(r[8]); sh = float(r[9])
             rows[d] = (oi, lo, sh)                 # dedupe on date
     dates = sorted(rows)
+    if not dates:
+        print("SKIPPED (offline / no cache): CFTC COT history (data/cot/) unavailable")
+        raise SystemExit(0)
     oi = np.array([rows[d][0] for d in dates])
     net = np.array([rows[d][1] - rows[d][2] for d in dates])
     return dates, net, oi

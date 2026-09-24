@@ -32,12 +32,22 @@ INK, GREEN, CLARET, BLUE, GREY = "#17120e", "#2f6d4f", "#7c1c2c", "#2b4a6f", "#6
 
 def fred(series):
     path = os.path.join(DATA, series + ".csv")
-    if not os.path.exists(path):
-        socket.setdefaulttimeout(60)
-        url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=" + series
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with open(path, "wb") as f:
-            f.write(urllib.request.urlopen(req).read())
+    if not (os.path.exists(path) and os.path.getsize(path) > 0):
+        try:
+            socket.setdefaulttimeout(60)
+            url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=" + series
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            raw = urllib.request.urlopen(req).read()
+            if not raw:
+                raise ValueError("empty response")
+            tmp = path + ".part"
+            with open(tmp, "wb") as f:
+                f.write(raw)
+            os.replace(tmp, path)
+        except Exception as e:
+            print(f"SKIPPED (offline / no cache): {os.path.basename(path)} - "
+                  f"{type(e).__name__}: {e}")
+            raise SystemExit(0)
     dates, vals = [], []
     with open(path) as f:
         r = csv.reader(f)

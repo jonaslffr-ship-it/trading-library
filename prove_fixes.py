@@ -76,11 +76,34 @@ def paper_has(name, relpath, needle):
     print(f" [{'PASS' if ok else 'FAIL'}] {name:52s} paper contains {needle!r}")
 
 paper_has("A1  gap phrase present (L2 greeks)",
-          "03-options/L2-greeks-and-hedging.md", "roughly 0.023, not the 0.058")
+          "02-options/L2-greeks-and-hedging.md", "roughly 0.023, not the 0.058")
 paper_has("A10 corrected 0.92 present (ML strategy)",
-          "10-strategy/L3-ml-strategy-building.md", "0.92")
+          "08-strategy/L3-ml-strategy-building.md", "0.92")
 paper_has("C6  two-sample t 2.88 present (macro L2)",
-          "08-macro-context/L2-macro-regimes-fundamentals.md", "2.88")
+          "06-macro-context/L2-macro-regimes-fundamentals.md", "2.88")
+
+# --- v1.1 second-audit corrections: one text anchor each, so reverting any of
+# them (K2/K9 and the six copied-error fixes N5a-f/N6) turns this script red.
+paper_has("K2  GJR corrected LR 141.6 (vol-modeling)",
+          "03-volatility/L3-vol-modeling-vrp.md", "141.6")
+paper_has("K9  CPI calendar-based 3.35 (macro L2)",
+          "06-macro-context/L2-macro-regimes-fundamentals.md", "3.35")
+paper_has("N5a two-sided month dep, April 2025 (model-to-trade)",
+          "08-strategy/L3-model-to-trade.md", "dropping April 2025")
+paper_has("N5b conditional break-even 0.0163 (model-to-trade)",
+          "08-strategy/L3-model-to-trade.md", "0.0163")
+paper_has("N5d Q015 five of six negative (research)",
+          "research/volatility-managed-strategies/volatility-managed-strategies.md",
+          "five of six grid points negative")
+paper_has("N5e Reg-NMS tick date Nov 2026 (how-markets-move)",
+          "05-market-mechanics/L1-how-markets-move.md", "November 2026")
+paper_has("N5f reversal-strategy AR(1) -0.005 (overfitting)",
+          "04-quant/L3-overfitting-calibration.md", "AR(1) near −0.005")
+paper_has("N6  tail x251 denominator caveat (tail-hedging)",
+          "08-strategy/L2-tail-hedging.md", "×251")
+paper_has("N6  C4 not-Clark-West gate (research §8)",
+          "research/volatility-managed-strategies/volatility-managed-strategies.md",
+          "pre-registered Clark-West gate")
 
 print("=" * 90); print(f"RESULT: {P} passed, {F} failed")
 raise SystemExit(1 if F else 0)

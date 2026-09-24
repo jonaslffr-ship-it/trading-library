@@ -31,38 +31,56 @@ VIX_CACHE = os.path.join(DATA, "vixcls.csv")
 
 
 def load_spx():
-    if os.path.exists(SPX_CACHE):
+    if not (os.path.exists(SPX_CACHE) and os.path.getsize(SPX_CACHE) > 0):
+        try:
+            socket.setdefaulttimeout(30)
+            url = "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=15y&interval=1d"
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            raw = urllib.request.urlopen(req).read()
+        except Exception as e:
+            print(f"SKIPPED (offline / no cache): {os.path.basename(SPX_CACHE)} - "
+                  f"{type(e).__name__}: {e}")
+            raise SystemExit(0)
+        j = json.loads(raw)
+        r = j["chart"]["result"][0]
+        ts, cl = r["timestamp"], r["indicators"]["quote"][0]["close"]
         dates, close = [], []
-        with open(SPX_CACHE) as f:
-            for row in csv.DictReader(f):
-                dates.append(row["date"]); close.append(float(row["close"]))
+        for t, c in zip(ts, cl):
+            if c is None:
+                continue
+            dates.append(dt.datetime.utcfromtimestamp(t).strftime("%Y-%m-%d"))
+            close.append(float(c))
+        tmp = SPX_CACHE + ".part"
+        with open(tmp, "w", newline="") as f:
+            w = csv.writer(f); w.writerow(["date", "close"])
+            for d, c in zip(dates, close):
+                w.writerow([d, f"{c:.4f}"])
+        os.replace(tmp, SPX_CACHE)
         return dates, np.array(close)
-    socket.setdefaulttimeout(30)
-    url = "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=15y&interval=1d"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    j = json.loads(urllib.request.urlopen(req).read())
-    r = j["chart"]["result"][0]
-    ts, cl = r["timestamp"], r["indicators"]["quote"][0]["close"]
     dates, close = [], []
-    for t, c in zip(ts, cl):
-        if c is None:
-            continue
-        dates.append(dt.datetime.utcfromtimestamp(t).strftime("%Y-%m-%d"))
-        close.append(float(c))
-    with open(SPX_CACHE, "w", newline="") as f:
-        w = csv.writer(f); w.writerow(["date", "close"])
-        for d, c in zip(dates, close):
-            w.writerow([d, f"{c:.4f}"])
+    with open(SPX_CACHE) as f:
+        for row in csv.DictReader(f):
+            dates.append(row["date"]); close.append(float(row["close"]))
     return dates, np.array(close)
 
 
 def load_vix():
-    if not os.path.exists(VIX_CACHE):
-        socket.setdefaulttimeout(60)
-        url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=VIXCLS"
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with open(VIX_CACHE, "wb") as f:
-            f.write(urllib.request.urlopen(req).read())
+    if not (os.path.exists(VIX_CACHE) and os.path.getsize(VIX_CACHE) > 0):
+        try:
+            socket.setdefaulttimeout(60)
+            url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=VIXCLS"
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            raw = urllib.request.urlopen(req).read()
+            if not raw:
+                raise ValueError("empty response")
+            tmp = VIX_CACHE + ".part"
+            with open(tmp, "wb") as f:
+                f.write(raw)
+            os.replace(tmp, VIX_CACHE)
+        except Exception as e:
+            print(f"SKIPPED (offline / no cache): {os.path.basename(VIX_CACHE)} - "
+                  f"{type(e).__name__}: {e}")
+            raise SystemExit(0)
     vd, vv = [], []
     with open(VIX_CACHE) as f:
         for row in csv.DictReader(f):

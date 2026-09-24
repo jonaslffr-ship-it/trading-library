@@ -30,13 +30,22 @@ P1, P2 = 1506816000, 1530316800                  # 2017-10-01 .. 2018-06-30 UTC
 
 def load_yahoo(symbol, fname):
     path = os.path.join(DATA, fname)
-    if not os.path.exists(path):
-        socket.setdefaulttimeout(60)
-        url = (f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
-               f"?period1={P1}&period2={P2}&interval=1d")
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with open(path, "wb") as f:
-            f.write(urllib.request.urlopen(req).read())
+    if not (os.path.exists(path) and os.path.getsize(path) > 0):
+        try:
+            socket.setdefaulttimeout(60)
+            url = (f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
+                   f"?period1={P1}&period2={P2}&interval=1d")
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            raw = urllib.request.urlopen(req).read()
+            json.loads(raw)                      # validate JSON before caching
+            tmp = path + ".part"
+            with open(tmp, "wb") as f:
+                f.write(raw)
+            os.replace(tmp, path)
+        except Exception as e:
+            print(f"SKIPPED (offline / no cache): {fname} - "
+                  f"{type(e).__name__}: {e}")
+            raise SystemExit(0)
     with open(path) as f:
         r = json.load(f)["chart"]["result"][0]
     ts = r["timestamp"]

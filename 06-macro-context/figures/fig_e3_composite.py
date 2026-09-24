@@ -36,12 +36,32 @@ os.makedirs(COTDIR, exist_ok=True)
 
 
 def fetch(url, path):
-    if os.path.exists(path):
+    """Cache url -> path. Read into memory first, validate non-empty, then
+    write atomically via a .part temp, so a failed/offline fetch never leaves
+    a 0-byte or partial cache behind (ERRATA cache-poison). Raises on failure."""
+    if os.path.exists(path) and os.path.getsize(path) > 0:
         return
     socket.setdefaulttimeout(60)
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with open(path, "wb") as f:
-        f.write(urllib.request.urlopen(req).read())
+    raw = urllib.request.urlopen(req).read()
+    if not raw:
+        raise ValueError("empty response")
+    tmp = path + ".part"
+    with open(tmp, "wb") as f:
+        f.write(raw)
+    os.replace(tmp, path)
+
+
+def ensure(url, path):
+    """fetch(); on offline failure with no usable cache, SKIP cleanly instead
+    of crashing or trusting a poisoned cache."""
+    try:
+        fetch(url, path)
+    except Exception as e:
+        if not (os.path.exists(path) and os.path.getsize(path) > 0):
+            print(f"SKIPPED (offline / no cache): {os.path.basename(path)} - "
+                  f"{type(e).__name__}: {e}")
+            raise SystemExit(0)
 
 
 def load_cot(code="13874A"):
@@ -59,11 +79,14 @@ def load_cot(code="13874A"):
             if r[3].strip() == code:
                 rows[r[2].strip()] = 100.0 * (float(r[8]) - float(r[9])) / float(r[7])
     dates = sorted(rows)
+    if not dates:
+        print("SKIPPED (offline / no cache): CFTC COT history (data/cot/) unavailable")
+        raise SystemExit(0)
     return dates, np.array([rows[d] for d in dates])
 
 
 def load_daily_map(path, url, datefmt, datecol, valcol, skip_headerish=True):
-    fetch(url, path)
+    ensure(url, path)
     out = {}
     with open(path) as f:
         for row in csv.reader(f):

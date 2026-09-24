@@ -24,12 +24,22 @@ VIX_CACHE = os.path.join(DATA, "vixcls.csv")
 
 
 def load_vix():
-    if not os.path.exists(VIX_CACHE):
-        socket.setdefaulttimeout(60)
-        url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=VIXCLS"
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with open(VIX_CACHE, "wb") as f:
-            f.write(urllib.request.urlopen(req).read())
+    if not (os.path.exists(VIX_CACHE) and os.path.getsize(VIX_CACHE) > 0):
+        try:
+            socket.setdefaulttimeout(60)
+            url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=VIXCLS"
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            raw = urllib.request.urlopen(req).read()
+            if not raw:
+                raise ValueError("empty response")
+            tmp = VIX_CACHE + ".part"
+            with open(tmp, "wb") as f:
+                f.write(raw)
+            os.replace(tmp, VIX_CACHE)
+        except Exception as e:
+            print(f"SKIPPED (offline / no cache): {os.path.basename(VIX_CACHE)} - "
+                  f"{type(e).__name__}: {e}")
+            raise SystemExit(0)
     vd, vv = [], []
     with open(VIX_CACHE) as f:
         for row in csv.DictReader(f):

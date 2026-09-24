@@ -212,9 +212,12 @@ with a 21-test reproducing suite (21/21, 119/119 checks, deterministic).
   (via `arch`): α=0.027, γ=0.232, β=0.816, asymmetry ≈9.7×, logL 12,658.4 (LR 141.6).
   §3.3, caption, evidence; figure regenerated.
 - **K3 · Model-to-Trade — OOS Sharpe 1.24.** §7.3 now carries the bootstrap 95% CI
-  ≈ [0.39; 2.64], the single-month dependence (with March 2020 → ≈0.09; no other month
-  moves it >0.07), and the break-even cost (−0.0015 ≈ 3.5% of variance sold; edge gone
-  at a realistic 0.008).
+  ≈ [0.39; 2.64] and a thin, two-sided single-month dependence (taking March 2020 → ≈0.09;
+  no other out-of-sample month moves it *down* by >0.07, but dropping April 2025 *raises* it
+  to ≈1.99), and the honest break-even (−0.0015 ≈ 3.5% of variance sold; the *unconditional*
+  premium breaks even near 0.008 annualized-variance points, the *conditional* rule near 0.0163).
+  Re-corrected in v1.1 after a second audit found the earlier ">0.07" and "0.008" phrasings
+  one-directional and mis-attributed (see the second-audit follow-ups below).
 - **K4 · Dealer Flows / GEX — "0.1% agree" reassurance.** §4.4 now states the 0.1%
   median is near-the-money only, and that +$5.4 bn (all live contracts) vs −$28 bn
   (filtered `live & iv>0.01 & oi>0`, `max(dte,1)/365`) are different populations under
@@ -270,3 +273,41 @@ with a 21-test reproducing suite (21/21, 119/119 checks, deterministic).
 has been rebuilt from the paper's own LaTeX source (`volatility-managed-strategies.tex`) with
 tectonic — the author's title-page and section styling is preserved. `.md`, `.tex` and `.pdf` are
 consistent.
+
+### N. Second re-audit follow-ups (v1.1)
+
+A second external audit re-ran the repository after the v1.0 corrections and, crucially,
+re-verified the *first* audit's own claims. Six of those claims had been adopted into the papers
+without independent checking; five were wrong or mis-labelled. Every item below was reproduced
+with the repository's own code on free data before being applied.
+
+- **N1 · `make verify` regression.** The track-renumber (03→02 … 10→08) left eight stale paper
+  paths in `verify_listings.py`/`prove_fixes.py`; `make verify` aborted with exit 2. Repointed to
+  02–08; harness green (verify_listings 17/17, prove_fixes 26/26).
+- **N4 · Cache-poisoning pattern, fully swept.** The F1/F3 atomic-write (`.part` + `os.replace`) +
+  offline-`SKIPPED` fix now covers the remaining **7 volatility + 12 macro** figure scripts (19
+  total), not only the seven option-chain scripts.
+- **N5a · Model-to-Trade §7.3 single-month claim.** "no other *in-sample* month moves it by more
+  than 0.07" → the dependence is *out-of-sample* and two-sided: no month moves it *down* by >0.07,
+  but dropping April 2025 *raises* the OOS Sharpe to ≈1.99 (reproduced from `fig_g2_strategy.py`).
+- **N5b · Model-to-Trade §7.3 break-even.** "edge gone at a *realistic* 0.008" → 0.008 is the
+  *unconditional* break-even; the *conditional* OOS rule survives to ≈0.0163 (Sharpe ≈0.70 at a
+  0.008 cost). "realistic" dropped.
+- **N5c · Tail-Hedging §5.2 skew comparison.** "+20–110 % at the same *strike*" → at the same
+  *delta*; at the same *strike* the skew premium effect is several-fold larger (direction confirmed
+  numerically).
+- **N5d · Research §6.3 Q015.** "four of six grid points negative" → **five of six** (ΔCalmar
+  against a buy-and-hold Calmar of 0.392; reproduced from `sleeves_SPX.csv`).
+- **N5e · How Markets Move §3.1 tick date.** "half-cent ticks from late 2025" → the SEC extended
+  the compliance date to **November 2026** and a further slip to 2027 is widely expected.
+- **N5f · Overfitting §2.1 autocorrelation.** The −0.11 AR(1) is the S&P *index return's*; the
+  1-day reversal *strategy's* own returns show AR(1) ≈ **−0.005** (both reproduced). Attribution fixed.
+- **N6 · Corrections propagated.** Tail §6.1 body now carries the ×8 800 denominator-artefact caveat
+  (≈×251 against the entry premium); research §8 no longer calls C4 "real by our gates" — it clears
+  DM but not the pre-registered Clark-West gate, as §3f already states.
+- **N7 · Regression guard.** `prove_fixes.py` now holds one text anchor per v1.1 correction (K2, K9,
+  N5a/b/d/e/f, N6), so reverting any of them turns the harness red.
+
+*Not adopted from the second audit:* N8 (the "byte-identical" wording — flagged, not re-verified),
+N9 (Markdown and PDF agree on every *corrected* claim but differ in overall length), and the ~40
+open high-severity findings outside K1–K14 (N10), which remain a separate work item.
