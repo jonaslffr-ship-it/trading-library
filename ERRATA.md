@@ -266,6 +266,6 @@ with a 21-test reproducing suite (21/21, 119/119 checks, deterministic).
 - **V-09 · NDX-PBO** (§6.2): the same `thesis_validation.csv` reports PBO 0.365 on NDX, so the
   SPX overfitting flag is market-specific — now stated.
 
-**Note on the research paper PDF:** the `.md` corrections above are applied. This paper's PDF is
-built with a LaTeX (pandoc/xelatex) pipeline; rebuild it from the corrected markdown with that
-pipeline so the PDF carries the corrected numbers.
+**Note on the research paper PDF:** the `.md` corrections above are applied and the PDF has been
+rebuilt (pandoc + tectonic, the same LaTeX/xdvipdfmx toolchain) so it carries the corrected numbers.
+Re-render with the original build configuration if the exact title-page styling is required.
