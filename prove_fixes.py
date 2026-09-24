@@ -2,7 +2,7 @@
 """Re-derive each corrected claim independently and check it equals the number
 now printed in the paper (the old, wrong values are shown too, for contrast).
 Needs numpy + scipy. Run:  python prove_fixes.py"""
-import math
+import math, os
 from statistics import NormalDist
 from scipy import stats
 N = NormalDist(); Phi = N.cdf
@@ -58,6 +58,29 @@ chk("C4 vol-point wedge as %^2/mo (paper ~9.96)", (18.0**2-14.3**2)/12, 9.96, to
 t=(1.39-0.32)/math.sqrt((0.50/1.96)**2+(0.53/1.96)**2)
 chk("C6 two-sample t (paper 2.88)", t, 2.88, tol=2e-2)
 chk("C6 two-sided p (paper ~0.004)", 2*(1-stats.norm.cdf(t)), 0.004, tol=1e-3, rel=False)
+
+# --- ERRATA F6: actually OPEN the papers, so reverting a corrected NUMBER in
+# the prose (not just re-deriving the arithmetic) is caught. Previously this
+# script never read a paper, so a reverted errata stayed green (audit T20).
+HERE = os.path.dirname(os.path.abspath(__file__))
+def paper_has(name, relpath, needle):
+    global P, F
+    try:
+        txt = open(os.path.join(HERE, relpath), encoding="utf-8").read()
+    except OSError as e:
+        F += 1
+        print(f" [FAIL] {name:52s} could not open {relpath}: {e}")
+        return
+    ok = needle in txt
+    P += ok; F += (not ok)
+    print(f" [{'PASS' if ok else 'FAIL'}] {name:52s} paper contains {needle!r}")
+
+paper_has("A1  gap phrase present (L2 greeks)",
+          "03-options/L2-greeks-and-hedging.md", "roughly 0.023, not the 0.058")
+paper_has("A10 corrected 0.92 present (ML strategy)",
+          "10-strategy/L3-ml-strategy-building.md", "0.92")
+paper_has("C6  two-sample t 2.88 present (macro L2)",
+          "08-macro-context/L2-macro-regimes-fundamentals.md", "2.88")
 
 print("=" * 90); print(f"RESULT: {P} passed, {F} failed")
 raise SystemExit(1 if F else 0)
