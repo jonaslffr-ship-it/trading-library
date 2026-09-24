@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """English figure set for the PUBLISHED paper -> figures/report_en/.
 
-Separate from report_figures.py (which stays German for the vault reports).
+Separate from report_figures.py (which stays German for the internal reports).
 Carries the review corrections:
   * English titles, NO 'Fig. N —' number prefix (avoids figure-number vs. caption clashes);
   * the forecast ladder shows the log-target comparable set only (the level-target LHAR/HARQ/

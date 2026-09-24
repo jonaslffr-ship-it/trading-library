@@ -5,7 +5,7 @@
 > **`PREREGISTRATION-FORECAST-EN.md`** (QR002, frozen 2026-08-15). Both are released.
 
 
-*English translation of the German vault original (`QR006`, dated 2026-08-16). The original
+*English translation of the German original (`QR006`, dated 2026-08-16). The original
 was written and committed **before** the first campaign backtest was run; the campaign code
 commit is `cdc87e4`. Nothing below was altered after results were seen; the three
 documented deviations are listed at the end.*

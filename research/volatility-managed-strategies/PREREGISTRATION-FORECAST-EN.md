@@ -1,6 +1,6 @@
 # Pre-Registration — Realized-Volatility Forecasting
 
-*English translation of the German vault original (`PREREGISTRATION.md`; vault note `QR002`,
+*English translation of the German original (`PREREGISTRATION.md`; note `QR002`,
 hypothesis id `Q006`), **frozen 2026-08-15, before the first result was seen.** Changes after the
 first backtest run are append-only and dated. This document governs the paper's **headline
 forecasting claim**; the strategy campaign is pre-registered separately in `PREREGISTRATION-EN.md`

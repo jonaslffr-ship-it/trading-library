@@ -14,7 +14,7 @@ measured identically:
     P5/P50/P95, MaxDD median/P95, P(end<start), P(MaxDD < -20%).
   - PSR/DSR/PBO/bootstrap-CI re-exported from validation.py (single implementation).
 
-Pre-registered in vault note QR006 before any campaign backtest was run.
+Pre-registered in note QR006 before any campaign backtest was run.
 """
 from __future__ import annotations
 

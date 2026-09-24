@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Strategy campaign (QR006): pre-registered sleeve families, honestly costed.
 
-Sleeves (grids FIXED in vault note QR006 before the first run):
+Sleeves (grids FIXED in note QR006 before the first run):
   BH            buy & hold benchmark
   VM            volatility-managed on log-HAR forecast (existing Q007 baseline)
   TSMOM         time-series momentum, lookback {63,126,252} x {L/S, L/F} x voltgt {0,1}

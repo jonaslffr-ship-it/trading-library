@@ -542,7 +542,8 @@ that a disciplined protocol will, and should, kill your favourite backtest.
 ## Disclosures
 
 **Conflicts of interest:** none. **Data:** MarketTick 1-minute S&P 500 data (licensed, not
-redistributed; sha256 fingerprints in `data/data_manifest.csv`), FRED (public). **Reproducibility:** all numbers reproduce deterministically from the versioned code (seed 42), and the author bears full substantive responsibility. **No investment advice:** research/educational
+redistributed; sha256 fingerprints in `data/data_manifest.csv`), FRED (public). **Reproducibility:** all numbers reproduce deterministically from the versioned code (seed 42);
+the author bears full substantive responsibility. **No investment advice:** research/educational
 project; historical simulation on a price index net of assumed costs.
 
 ## References

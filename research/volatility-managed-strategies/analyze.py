@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """SPX realized-volatility OOS forecasting: HAR family vs. benchmarks.
 
-Confirmatory (PREREGISTRATION.md / vault QR002): log-HAR has a LOWER out-of-sample
+Confirmatory (PREREGISTRATION.md / QR002): log-HAR has a LOWER out-of-sample
 QLIKE than the Random Walk on SPX, h=1. First OOS 2013-01-02. Exploratory: EWMA / AR /
 GARCH(1,1) benchmarks, HAR-CJ, horizons h=5,22. Loss QLIKE (primary) + MSE; tests
 Diebold-Mariano and Clark-West (nested). Seed 42.

@@ -16,7 +16,7 @@ This library is a set of original scientific papers written by Jonas Löffler (`
 | 🟡 | Intermediate (L2) | Assumes the track's L1 + market basics |
 | 🔴 | Advanced (L3) | Research level: derivations, cited literature, reproducible code |
 
-## The system: 6 tracks, 3 pillars
+## The system: 7 tracks, 4 pillars
 
 The library holds 25 papers. The core is a program of 22 documents across seven tracks, grouped into four pillars — **Mechanics** (how markets move), **Method** (how you test and build systems), **Context** (why markets move), and **Application** (how you deploy it — alpha and risk management) — plus three foundational papers on futures/market structure and technical analysis.
 
