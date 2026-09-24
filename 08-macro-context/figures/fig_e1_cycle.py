@@ -50,6 +50,20 @@ def fred(series):
     return dates, np.array(vals)
 
 
+def yoy_calendar(dates, vals):
+    """Calendar-based YoY: compare each month with the SAME calendar month one
+    year earlier, not the 12th prior observation, so a gap in the series does
+    not shift the comparison base (ERRATA / audit K9)."""
+    lut = {(d.year, d.month): v for d, v in zip(dates, vals)}
+    out_d, out_v = [], []
+    for d, v in zip(dates, vals):
+        prev = lut.get((d.year - 1, d.month))
+        if prev is not None and prev != 0:
+            out_d.append(d)
+            out_v.append(100.0 * (v / prev - 1.0))
+    return np.array(out_v), out_d
+
+
 def rec_spans(rd, rv):
     spans, start = [], None
     for d, v in zip(rd, rv):
@@ -66,8 +80,7 @@ ip_d, ip = fred("INDPRO")
 sl_d, sl = fred("T10Y3M")                 # daily, starts 1982-01
 rec_d, rec = fred("USREC")
 
-ip_yoy = 100.0 * (ip[12:] / ip[:-12] - 1.0)
-ip_yoy_d = ip_d[12:]
+ip_yoy, ip_yoy_d = yoy_calendar(ip_d, ip)
 
 START = dt.datetime(1982, 1, 1)           # limited by T10Y3M's start
 spans = [s for s in rec_spans(rec_d, rec) if s[1] >= START]

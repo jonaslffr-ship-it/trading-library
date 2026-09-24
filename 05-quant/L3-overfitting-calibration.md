@@ -69,7 +69,7 @@ Write the per-period Sharpe ratio of a return series as SR = μ/σ, the ratio of
 
   σ_SR ≈ √(252 / T).
 
-This one formula carries the whole section. On a five-year sample (*T* = 1260) it gives σ_SR ≈ 0.45; on a one-year sample (*T* = 252) it gives σ_SR ≈ 1.0. A single zero-edge strategy on one year of data therefore has an annualized Sharpe that is a standard normal variable — routinely ±1, occasionally ±2, entirely by chance. Nothing is wrong with that strategy; it simply has no edge and a short measurement window.
+This one formula carries the whole section — with one assumption named now and discharged in Section 3.1: it treats returns as serially *independent*. When they are autocorrelated (leveraged, trend-following, or overlapping-holding-period strategies) the effective sample is smaller and this formula runs *optimistic*; Section 3.1 gives the Lo (2002) correction and insists it not be skipped silently. On the S&P daily reversal of the backtesting paper the measured first-order autocorrelation is about −0.11, small enough that the iid formula is a fair approximation *here*, but the caveat is general. On a five-year sample (*T* = 1260) it gives σ_SR ≈ 0.45; on a one-year sample (*T* = 252) it gives σ_SR ≈ 1.0. A single zero-edge strategy on one year of data therefore has an annualized Sharpe that is a standard normal variable — routinely ±1, occasionally ±2, entirely by chance. Nothing is wrong with that strategy; it simply has no edge and a short measurement window.
 
 ### 2.2 The best of *N* is an order statistic
 

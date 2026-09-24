@@ -47,12 +47,27 @@ def fred(series):
     return dates, np.array(vals)
 
 
+def yoy_calendar(dates, vals):
+    """Calendar-based year-over-year: compare each month with the SAME calendar
+    month one year earlier, not with the 12th prior *observation*. A gap in the
+    series (e.g. the un-published Oct-2025 CPI) otherwise silently shifts the
+    comparison base and biases every later YoY (ERRATA / audit K9)."""
+    lut = {(d.year, d.month): v for d, v in zip(dates, vals)}
+    out_d, out_v = [], []
+    for d, v in zip(dates, vals):
+        prev = lut.get((d.year - 1, d.month))
+        if prev is not None and prev != 0:
+            out_d.append(d)
+            out_v.append(100.0 * (v / prev - 1.0))
+    return np.array(out_v), out_d
+
+
 h_d, h = fred("CPIAUCSL")
 c_d, c = fred("CPILFESL")
 t_d, t = fred("DFEDTARU")
 
-h_yoy, h_yd = 100.0 * (h[12:] / h[:-12] - 1.0), h_d[12:]
-c_yoy, c_yd = 100.0 * (c[12:] / c[:-12] - 1.0), c_d[12:]
+h_yoy, h_yd = yoy_calendar(h_d, h)
+c_yoy, c_yd = yoy_calendar(c_d, c)
 
 LO, HI = dt.datetime(2019, 1, 1), dt.datetime(2026, 1, 1)
 mh = [i for i, d in enumerate(h_yd) if LO <= d < HI]

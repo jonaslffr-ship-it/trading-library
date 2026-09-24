@@ -52,6 +52,20 @@ def fred(series):
     return dates, np.array(vals)
 
 
+def yoy_calendar(dates, vals):
+    """Calendar-based YoY: compare each month with the SAME calendar month one
+    year earlier, not the 12th prior observation, so a gap in the series does
+    not shift the comparison base (ERRATA / audit K9)."""
+    lut = {(d.year, d.month): v for d, v in zip(dates, vals)}
+    out_d, out_v = [], []
+    for d, v in zip(dates, vals):
+        prev = lut.get((d.year - 1, d.month))
+        if prev is not None and prev != 0:
+            out_d.append(d)
+            out_v.append(100.0 * (v / prev - 1.0))
+    return np.array(out_v), out_d
+
+
 def rec_spans(rd, rv):
     """Turn the monthly USREC 0/1 series into a list of (start, end) spans."""
     spans, start = [], None
@@ -72,8 +86,7 @@ bs_d,  bs  = fred("WALCL")                # Fed total assets, weekly, $ millions
 rec_d, rec = fred("USREC")                # NBER recession indicator, monthly
 
 # CPI year-over-year % from the index (12-month change)
-cpi_yoy = 100.0 * (cpi[12:] / cpi[:-12] - 1.0)
-cpi_yoy_d = cpi_d[12:]
+cpi_yoy, cpi_yoy_d = yoy_calendar(cpi_d, cpi)
 
 START = dt.datetime(1970, 1, 1)
 spans = [s for s in rec_spans(rec_d, rec) if s[1] >= START]
