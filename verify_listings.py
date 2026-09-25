@@ -78,5 +78,34 @@ print(f"\n[L3-vol-modeling-vrp] blocks {nk}/{nb} ok")
 defs = [k for k in ns if callable(ns.get(k)) and not k.startswith("__")]
 chk("GARCH listing exec'd, callables defined", len(defs) > 0, f"defs={sorted(defs)[:8]}")
 
+ns, out, nb, nk = run_file("02-options/L2-greeks-and-hedging.md")
+print(f"\n[L2-greeks-and-hedging] blocks {nk}/{nb} ok")
+g = ns["bsm_greeks"](S=100, K=100, T=21/252, r=0.04, sigma=0.20)
+chk("gamma=+0.06884", abs(g["gamma"] - 0.06884) < 1e-4, f"got {g['gamma']:+.5f}")
+chk("B11 vanna != charm (6 places, no invented identity)",
+    round(g["vanna"], 6) != round(g["charm"], 6), f"vanna={g['vanna']:+.6f} charm={g['charm']:+.6f}")
+
+# ---- listings coverage audit (C2): every paper with a ```python block is
+# accounted for as EXERCISED (asserted above), NETWORK (needs a live fetch), or
+# FRAGMENT (illustrative snippet without imports). A new, unclassified listing
+# fails this check, so coverage can no longer silently regress.
+import glob
+EXERCISED = {
+    "02-options/L2-greeks-first-order.md", "02-options/L2-greeks-and-hedging.md",
+    "02-options/L3-greeks-second-order.md", "02-options/L3-greeks-third-order.md",
+    "03-volatility/L3-vol-modeling-vrp.md", "04-quant/L3-overfitting-calibration.md"}
+NETWORK = {"04-quant/L1-statistics-for-traders.md"}                 # yfinance live fetch
+FRAGMENT = {"06-macro-context/L2-macro-regimes-fundamentals.md",   # pseudocode-in-comments
+            "07-algo-development/L2-paper-to-strategy.md"}          # snippet, no imports
+accounted = EXERCISED | NETWORK | FRAGMENT
+have = set()
+for p in glob.glob(os.path.join(ROOT, "**", "*.md"), recursive=True):
+    if ".git" in p:
+        continue
+    if "```python" in open(p, encoding="utf-8").read():
+        have.add(os.path.relpath(p, ROOT).replace(os.sep, "/"))
+chk(f"C2 all {len(have)} papers with a python listing are classified (6 exercised / 1 network / 2 fragment)",
+    have <= accounted, f"unclassified={sorted(have - accounted)}")
+
 print("=" * 94); print(f"RESULT: {P} passed, {F} failed")
 raise SystemExit(1 if F else 0)

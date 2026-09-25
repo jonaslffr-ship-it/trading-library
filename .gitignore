@@ -2,6 +2,7 @@
 curriculum/
 
 # Licensed CBOE option-chain snapshots — re-fetched by the figure scripts on demand, not redistributed
-03-options/figures/data/spx_chain.json
-03-options/figures/data/spx_chain_snapshot.json
-04-volatility/figures/data/SPX_options_snapshot.json
+# (paths updated for the 00–08 track renumbering; the old 03-options/04-volatility paths no longer matched)
+02-options/figures/data/spx_chain.json
+02-options/figures/data/spx_chain_snapshot.json
+03-volatility/figures/data/SPX_options_snapshot.json

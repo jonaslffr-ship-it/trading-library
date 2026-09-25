@@ -105,5 +105,68 @@ paper_has("N6  C4 not-Clark-West gate (research §8)",
           "research/volatility-managed-strategies/volatility-managed-strategies.md",
           "pre-registered Clark-West gate")
 
+
+# ============================================================================
+# v1.2 corrections — each RE-COMPUTED here (not merely grepped) and then anchored
+# in the paper, per the audit's "prove, don't grep" recommendation (C1).
+# ============================================================================
+print("-" * 90)
+
+# B2  raw-SVI g(k) with the PRINTED params is negative deep in the extrapolated
+#     call wing (min ~ -0.05 near k=0.31): arb-free only over the traded strikes.
+_a, _b, _rho, _m, _s = -0.018, 0.090, 0.185, 0.082, 0.212
+def _svi_g(k):
+    Sd = math.sqrt((k - _m) ** 2 + _s * _s); w = _a + _b * (_rho * (k - _m) + Sd)
+    wp = _b * (_rho + (k - _m) / Sd); wpp = _b * _s * _s / Sd ** 3
+    return (1 - k * wp / (2 * w)) ** 2 - (wp * wp / 4) * (1 / w + 0.25) + wpp / 2
+chk("B2 SVI min g over wide scan (paper: <0 in call wing, ~ -0.05)",
+    min(_svi_g(-1.0 + 0.001 * i) for i in range(2001)), -0.051, tol=6e-3)
+paper_has("B2 claim confined to traded strikes (vol-modeling)",
+          "03-volatility/L3-vol-modeling-vrp.md",
+          "no butterfly arbitrage over the range that is actually quoted")
+
+# B3  one-week ATM gamma drift on a TRADING-day clock: 0.141 -> 0.158, +11.8%.
+_S = _K = 100.0; _r = 0.04; _sig = 0.20
+def _gam(T):
+    d1 = (math.log(_S / _K) + (_r + 0.5 * _sig * _sig) * T) / (_sig * math.sqrt(T))
+    return phi(d1) / (_S * _sig * math.sqrt(T))
+chk("B3 gamma drift per trading day (paper +11.8%)",
+    100 * (_gam(4 / 252) / _gam(5 / 252) - 1), 11.8, tol=0.2)
+paper_has("B3 corrected +11.8% drift (greeks-third-order)",
+          "02-options/L3-greeks-third-order.md",
+          "+11.8% drift from the passage of time alone")
+paper_has("B5 speed estimate over-predicts (greeks-third-order)",
+          "02-options/L3-greeks-third-order.md", "*over*-predicts the true 0.130")
+
+# B4  spot-ATM 60-day at r=4%: d1,d2 BOTH positive, product > 0 -> vomma tiny & +.
+_Tv = 60 / 365; _d1 = (_r + 0.5 * _sig * _sig) * _Tv / (_sig * math.sqrt(_Tv))
+_d2 = _d1 - _sig * math.sqrt(_Tv); _ok = _d1 > 0 and _d2 > 0 and _d1 * _d2 > 0
+P += _ok; F += (not _ok)
+print(f" [{'PASS' if _ok else 'FAIL'}] B4 spot-ATM d1={_d1:+.3f}>0 AND d2={_d2:+.3f}>0 "
+      f"(vomma tiny & POSITIVE, not d2=-d1)")
+
+# B6  E[max Sharpe] finite-N (Bailey/LdP) ~1.46; crude sqrt(2 ln N) ~1.66 is only a bound.
+_ssr = math.sqrt(252 / 1260); _N = 1000; _eul = 0.5772156649015329
+chk("B6 Bailey/LdP finite-N E[max] (paper ~1.46)",
+    _ssr * ((1 - _eul) * ppf(1 - 1 / _N) + _eul * ppf(1 - 1 / (_N * math.e))), 1.456, tol=1e-2)
+chk("B6 crude sqrt(2 ln N) upper bound (~1.66)", _ssr * math.sqrt(2 * math.log(_N)), 1.662, tol=1e-2)
+paper_has("B6 finite-N formula in text (backtesting)",
+          "04-quant/L2-backtesting-methodology.md", "matching the finite-*N* formula")
+paper_has("B8 majority-class 54.5% baseline (ml-strategy)",
+          "08-strategy/L3-ml-strategy-building.md", "54.5")
+
+# --- previously-UNANCHORED v1.1 corrections now guarded (C1): reverting any of
+# K1 / K5 / K8 / K-M04 / N5c in the prose now turns this script red.
+paper_has("K1  conditional VIX-standardized coverage 71.9 (vol-fundamentals)",
+          "03-volatility/L1-volatility-fundamentals.md", "71.9")
+paper_has("K5  charm same-option 2.9x (greeks-and-hedging)",
+          "02-options/L2-greeks-and-hedging.md", "2.9×")
+paper_has("K8  NFCI cell 90% pre-1990, 341/378 (macro-regimes)",
+          "06-macro-context/L2-macro-regimes-fundamentals.md", "378 weeks (341)")
+paper_has("K-M04 ARL0 corrected to 4,290 (algos)",
+          "07-algo-development/L3-building-running-killing-algos.md", "4,290")
+paper_has("N5c tail-hedging skew at same delta (tail-hedging)",
+          "08-strategy/L2-tail-hedging.md", "at the same *delta*")
+
 print("=" * 90); print(f"RESULT: {P} passed, {F} failed")
 raise SystemExit(1 if F else 0)
