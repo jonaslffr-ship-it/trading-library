@@ -6,7 +6,7 @@ This library is a set of original scientific papers written by Jonas Löffler (`
 
 > **Disclaimer.** These are research and educational documents, **not investment advice**, not a recommendation or solicitation to trade any security, and not a statement of the views of any employer. Any rule or threshold shown (e.g. a volatility cut-off) is an illustration of a method, not a signal to act on. Trading options and derivatives involves substantial risk of loss. You are responsible for your own decisions.
 
-**Version & corrections.** Series **v1.1** (2026-09-24). Found errors are fixed in the open — see [CHANGELOG.md](CHANGELOG.md) and [ERRATA.md](ERRATA.md). Licensing: papers and figures under [CC BY 4.0](LICENSE); code under [MIT](LICENSE-CODE).
+**Version & corrections.** Series **v1.2** (2026-09-25). Found errors are fixed in the open — see [CHANGELOG.md](CHANGELOG.md) and [ERRATA.md](ERRATA.md). Licensing: papers and figures under [CC BY 4.0](LICENSE); code under [MIT](LICENSE-CODE).
 
 ## Difficulty badges
 
@@ -80,9 +80,10 @@ The library holds 25 papers. The core is a program of 22 documents across seven 
 ## House rules for the original papers
 
 - **No claim is "validated" without an out-of-sample test.** External sources make a claim *plausible*, never *confirmed*; only an own reproducible result with an OOS split earns the stronger word.
-- **Every empirical figure is reproducible** from free data (Yahoo, FRED, CBOE, CFTC) with the `figures/*.py` script beside it; downloaded data is cached so figures are stable offline.
+- **Every empirical *number* is reproducible** from free data (Yahoo, FRED, CBOE, CFTC) with the `figures/*.py` script beside it; downloaded data is cached so figures rebuild offline. Concretely, on an offline fresh clone `make verify` rebuilds **82 of 92** figures; **7** need a licensed CBOE option-chain snapshot (re-fetched at run time, not redistributed) and **3** need private or one-off inputs, and those are declared as `SKIPPED`. Reproducibility is defined over the printed **numbers**, not PNG bytes (which depend on the matplotlib/freetype build).
+- **Every claim about a source is checked against that source.** Any statement about a regulation, a market-structure fact, or another study is verified against the primary source, which is cited with a URL, an access date, and — where possible — the quoted passage of "what it actually finds." A source makes a claim *plausible*, never *confirmed*.
 - **Pre-registration and direction checks.** Effect sizes and out-of-sample splits are fixed before the test; the sign of the data is checked against the sign of the claim before the claim is made.
-- **Errata over silent edits.** When a number is wrong, it is corrected in [ERRATA.md](ERRATA.md), not quietly swapped.
+- **Errata over silent edits.** When a number is wrong, it is corrected in [ERRATA.md](ERRATA.md), not quietly swapped; open, disputed, and won't-fix items are listed in [KNOWN-ISSUES.md](KNOWN-ISSUES.md).
 - **Not investment advice.** These are research and educational documents.
 
 ## Data license

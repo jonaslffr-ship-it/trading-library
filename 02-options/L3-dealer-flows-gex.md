@@ -1,6 +1,6 @@
 ---
 title: "Dealer Positioning & Hedging Flows (GEX)"
-last_updated: 2026-09-20
+last_updated: 2026-09-25
 ---
 
 # Dealer Positioning & Hedging Flows (GEX)

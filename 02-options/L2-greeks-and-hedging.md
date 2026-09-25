@@ -1,6 +1,6 @@
 ---
 title: "The Greeks — Sensitivities & Hedging"
-last_updated: 2026-09-20
+last_updated: 2026-09-25
 ---
 
 # The Greeks — Sensitivities & Hedging

@@ -1,6 +1,6 @@
 ---
 title: "From Paper to Strategy — Anomalies & Replication"
-last_updated: 2026-09-20
+last_updated: 2026-09-25
 ---
 
 # From Paper to Strategy — Anomalies & Replication

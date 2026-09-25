@@ -1,6 +1,6 @@
 ---
 title: "Volatility Modeling & the Variance Risk Premium"
-last_updated: 2026-09-20
+last_updated: 2026-09-25
 ---
 
 # Volatility Modeling & the Variance Risk Premium

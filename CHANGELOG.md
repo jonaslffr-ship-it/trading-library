@@ -4,6 +4,34 @@ All notable changes to the Trading Library paper series are recorded here.
 The series is versioned as a whole; corrections to individual claims are itemised
 in [ERRATA.md](ERRATA.md). Dates are ISO (YYYY-MM-DD).
 
+## v1.2 — 2026-09-25
+
+Corrections from a third independent audit (fresh clone of tag `v1.1` = 9eab2d6;
+`make verify` 82/10/0 offline and 89/3/0 online; an independent check suite;
+recomputation of every quoted number; primary sources pulled for each literature
+and world-state claim). Itemised in [ERRATA.md](ERRATA.md) as P1–P5 (citations),
+R1–R11 (content), S1–S4 (guard & reproducibility).
+
+- **Citations (P1–P5).** Five literature/source citations corrected against their
+  primary sources: STW 1999 (split from Bessembinder & Chan 1998), Jegadeesh &
+  Titman 1993 → Jegadeesh 1990 / Lehmann 1990, Almgren 2005 (rejects β=½),
+  Golez & Jackwerth 2012 (restated), and the 0DTE 62% share (CBOE, Aug 2025).
+- **Content (R1–R11).** Yield-curve episodes; SVI butterfly wing; gamma-drift
+  clock (+11.8%); ATM-vomma sign; speed over/under; Bailey–LdP finite-N Sharpe;
+  DSR autocorrelation pass-through; ML majority-class baseline (54.5%); vol-matched
+  Sharpe; four carried-through conclusions; vanna/charm print precision.
+- **Regression guard & reproducibility (S1–S4).** `prove_fixes.py` recomputes the
+  new numbers and anchors the previously-unguarded fixes (26 → 41 checks);
+  `verify_listings.py` gains the greeks-and-hedging listing and a 9-paper coverage
+  audit (17 → 21 checks); the "byte-identical" claim is retired; `.gitignore`
+  snapshot paths fixed.
+- **Process.** Added a source-checking house rule and [KNOWN-ISSUES.md](KNOWN-ISSUES.md)
+  (open/disputed/won't-fix, incl. the md↔tex divergence and the VIX/ATM item).
+- Series version → **v1.2**: `CITATION.cff`, `README.md`, and this file.
+
+*Audited by:* third external audit, 2026-09-25 — fresh clone, Python 3.11,
+pinned `requirements.txt`; check suite and recomputations reproduced by the author.
+
 ## v1.1 — 2026-09-24
 
 Corrections from a second independent audit, plus a re-verification of the first

@@ -1,6 +1,6 @@
 ---
 title: "The Flow Landscape — Systematic & Dealer Flows in the Underlying"
-last_updated: 2026-09-20
+last_updated: 2026-09-25
 ---
 
 # The Flow Landscape — Systematic & Dealer Flows in the Underlying

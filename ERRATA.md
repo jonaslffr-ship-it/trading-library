@@ -311,3 +311,95 @@ with the repository's own code on free data before being applied.
 *Not adopted from the second audit:* N8 (the "byte-identical" wording — flagged, not re-verified),
 N9 (Markdown and PDF agree on every *corrected* claim but differ in overall length), and the ~40
 open high-severity findings outside K1–K14 (N10), which remain a separate work item.
+
+---
+
+## v1.2 (2026-09-25) — corrections from a third external audit
+
+A third external audit re-cloned the repository at `v1.1` (tag `v1.1` = 9eab2d6), re-ran
+`make verify` and an independent check suite, recomputed every quoted number, and pulled the
+primary sources for each literature and world-state claim. Every item below was reproduced *by us*
+with the repository's own code, an independent recomputation, or a primary source with a URL and
+access date, and each is now guarded (recomputed, not merely grepped) in `prove_fixes.py` or
+`verify_listings.py`.
+
+### P. Literature citations (checked against the primary source)
+
+- **P1 · Technical Analysis §3, §8 (STW 1999).** "The 1992 result shrank once transaction costs and
+  data-snooping corrections were applied (Sullivan, Timmermann & White 1999)" conflated two findings.
+  Split: the transaction-cost caveat is **Bessembinder & Chan (1998)**; STW's best rule *survived*
+  White's Reality Check in-sample and failed only *out-of-sample* 1987–96. Evidence table refined.
+- **P2 · Technical Analysis §5 evidence table (Jegadeesh & Titman 1993).** Short-horizon index
+  mean-reversion was attributed to Jegadeesh & Titman (1993), which is the *intermediate-horizon
+  momentum* paper on single stocks. Re-attributed to **Jegadeesh (1990) / Lehmann (1990)**; the index
+  sign is declared our own measurement. References added.
+- **P3 · Flow Landscape §3.2 (Almgren et al. 2005).** "a power close to 0.6, consistent with the
+  square root" reversed the source, which *rejects* β = ½ at the 95% level in favour of a 3/5 power
+  (PDF, p. 20: "the square-root model β = 1/2 is rejected"). Reworded to "concave but steeper than
+  the square root."
+- **P4 · Dealer Flows / GEX §5.4 (Golez & Jackwerth 2012).** The paper's "pinning conditional on the
+  sign of dealer gamma (long gamma pins, short gamma anti-pins)" is not G&J's finding. G&J document
+  pinning at *serial-futures-option* expiry and *anti-cross-pinning* before *index-option* expiry,
+  driven by delta-hedge rebalancing and retail ITM reselling. Restated; the gamma-sign conditionality
+  is now marked a hypothesis from **Avellaneda & Lipkin (2003)**. Reference added.
+- **P5 · Dealer Flows / GEX §8 (0DTE share).** "0DTE at roughly 62% of SPX option volume year-to-date
+  through August 2026 (CBOE 2023)" is impossible from a 2023 source. Corrected to CBOE's record
+  **62.4% single-month share for August 2025** (Cboe Insights, 2 Sep 2025, accessed 25 Sep 2026);
+  reference added; the ~17% 2020 baseline stays with Cboe 2023.
+
+### R. Content errors (each recomputed)
+
+- **R1 · Macro Foundations §6 — yield-curve episodes.** Prose listed 1978, **1980**, 1988, 2000,
+  2005–06, 2019. The pre-committed rule dates 1978 (one 823-day episode, *no* separate 1980), 1988,
+  **1998** (lag 35 mo), 2000, 2005, a 2019 blip, and the open **2022** episode. Lag range 7→**35**
+  months; 2022 named as the counterexample. Matches `fig_e1_yield_curve.py`.
+- **R2 · Vol Modeling §8.4 — SVI butterfly.** "strictly positive everywhere" was a scan-range
+  artifact: with the printed params g(k) turns **negative in the extrapolated call wing**
+  (min ≈ −0.05 near k = 0.31, negative on k ∈ [0.18, 0.52]). Claim confined to the traded strikes;
+  `fig_svi_fit.py` now scans and plots the wing and labels it honestly.
+- **R3 · Greeks (third-order) §7 — gamma drift.** "+6.9% / day" mixed a per-**calendar**-day color
+  with a **trading**-day maturity. On one clock (trading days) the one-week gamma goes 0.141 → 0.158,
+  **+11.8%** per session; book mis-size +11.8%. `fig_to_worked_examples.py` revalues one trading day.
+- **R4 · Greeks (third-order) §7 — speed estimate.** "under-predicts the true 0.130" → **over**-predicts
+  (0.138 > 0.130).
+- **R5 · Greeks (second-order) §5 — ATM vomma sign.** "d₂ ≈ −d₁, product negative" holds only at the
+  *forward*-ATM. At the *spot*-ATM strike with r = 4% both d₁ (+0.12) and d₂ (+0.04) are positive, so
+  d₁·d₂ > 0 and vomma is tiny and **positive** (+0.00004) — consistent with the printed value.
+- **R6 · Backtesting §2.3 — expected-max Sharpe.** Attributed σ_SR·√(2 ln N) to Bailey et al. while
+  quoting ≈1.45, which is the finer **Bailey & López de Prado (2014)** finite-N value (1.46).
+  √(2 ln N) (1.66) is now given only as the asymptotic upper bound; finite-N curve added to Figure 1;
+  DSR reference added.
+- **R7 · Overfitting §9.1 — DSR autocorrelation.** `deflated_sharpe` never forwarded `rho` to `psr`,
+  so the Lo (2002) correction could not reach the DSR. Signature extended and `rho` forwarded;
+  `verify_listings.py` now checks DSR(ρ=0.2) < DSR(ρ=0).
+- **R8 · ML Strategy §2 — baseline.** 52% OOS accuracy is below the **54.5% majority-class
+  ("always-long") baseline** (OOS Sharpe 0.62), i.e. worse than no model, not "a coin flip with a
+  tailwind." `fig_g3_overfit.py` draws the baseline.
+- **R9 · Research §6.3 — vol-matched Sharpe.** Sharpe is scale-invariant, so "vol-matched Sharpe"
+  (0.945 vs 0.941) is just Sharpe; the real difference is the Calmar. Reworded (.md + .tex).
+- **R10 · Stale conclusions.** Research abstract now states C4 *fails* the pre-registered Clark-West
+  gate (.md + .tex); Macro Regimes §9.1 confined to the post-1990 subsample; Paper-to-Strategy §3.4
+  marks the fragility prior contested (Chen & Zimmermann); Backtesting §2.6 notes the gross Sharpe
+  was not significant to begin with.
+- **R11 · Greeks & Hedging §10 — vanna/charm identity.** The listing printed both as −0.00057
+  (5 places). Now printed to 6 places: vanna −0.000574, charm −0.000566. Added to
+  `verify_listings.py`.
+
+### S. Regression guard & reproducibility
+
+- **S1 · `prove_fixes.py` now recomputes.** The v1.2 numbers (R2/R3/R5/R6) are re-derived and
+  compared to the paper; the previously-unanchored v1.1 fixes **K1, K5, K8, K-M04, N5c** are now
+  anchored (26 → 41 checks).
+- **S2 · `verify_listings.py` coverage.** The L2-greeks-and-hedging listing is executed (R11), and a
+  coverage audit accounts for all nine papers with a python block (6 exercised / 1 network /
+  2 fragment) so coverage cannot silently regress.
+- **S3 · "byte-identical" retired (supersedes N8).** `requirements.txt` no longer claims byte-identical
+  PNGs — the committed PNGs were built across matplotlib 3.10.8 and 3.11.1, and PNG bytes depend on
+  the freetype build. Reproducibility is defined over the printed **numbers** (`make verify`).
+- **S4 · `.gitignore` snapshot paths.** Fixed the stale `03-options/04-volatility` paths to the
+  renumbered `02-options/03-volatility`, so the licensed CBOE snapshots are ignored again.
+
+*Open / not closed in v1.2:* the md↔tex divergence of the research paper (one-source build, tracked in
+`KNOWN-ISSUES.md`), the ~40 open findings outside K1–K14 (now listed in `KNOWN-ISSUES.md`), and
+B12 (VIX 17.7 vs the ~12% 30-day ATM read of §7, which needs the non-redistributed chain snapshot to
+resolve; also in `KNOWN-ISSUES.md`).

@@ -1,6 +1,6 @@
 ---
 title: "Second-Order Greeks — Gamma, Vanna, Charm, Vomma"
-last_updated: 2026-09-20
+last_updated: 2026-09-25
 ---
 
 # Second-Order Greeks — Gamma, Vanna, Charm, Vomma

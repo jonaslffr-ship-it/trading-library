@@ -1,6 +1,6 @@
 ---
 title: "Third-Order Greeks — Speed, Zomma, Color, Ultima"
-last_updated: 2026-09-20
+last_updated: 2026-09-25
 ---
 
 # Third-Order Greeks — Speed, Zomma, Color, Ultima

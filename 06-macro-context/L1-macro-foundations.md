@@ -1,6 +1,6 @@
 ---
 title: "Macro Foundations — What Moves the Whole Market"
-last_updated: 2026-09-20
+last_updated: 2026-09-25
 ---
 
 # Macro Foundations — What Moves the Whole Market

@@ -1,6 +1,6 @@
 ---
 title: "Macro Regimes, Fundamentals & the Reaction Function"
-last_updated: 2026-09-20
+last_updated: 2026-09-25
 ---
 
 # Macro Regimes, Fundamentals & the Reaction Function
