@@ -194,10 +194,28 @@ def g_of(kk):
     return (1 - kk * wp / (2 * w)) ** 2 - (wp * wp / 4.0) * (1.0 / w + 0.25) + wpp / 2.0
 
 
+# Headline verdict over the TRADED strikes (plus a small extrapolation) ...
 kg = np.linspace(k.min() - 0.05, k.max() + 0.05, 1201)
 g = g_of(kg)
 gmin = float(g.min()); kmin = float(kg[int(np.argmin(g))])
 bfly_ok = gmin >= 0.0
+# ... and a WIDE scan deep into the extrapolated call wing, because raw SVI is
+# known to threaten g<0 there. That negativity is a property of the extrapolation,
+# NOT of the traded slice, so we report the two separately rather than claim
+# "strictly positive everywhere" (which a narrow scan would falsely suggest).
+kg_wide = np.linspace(k.min() - 0.10, k.max() + 0.50, 4001)
+g_wide = g_of(kg_wide)
+gmin_wide = float(g_wide.min()); kmin_wide = float(kg_wide[int(np.argmin(g_wide))])
+neg = kg_wide[g_wide < 0.0]
+wing_ok = neg.size == 0
+if wing_ok:
+    wing_txt = (f"g(k)>=0 over traded strikes (min {gmin:+.4f} at k={kmin:+.3f}) "
+                f"and into the extrapolated wing (min {gmin_wide:+.4f})")
+else:
+    wing_txt = (f"g(k)>=0 over traded strikes (min {gmin:+.4f} at k={kmin:+.3f}); "
+                f"dips to {gmin_wide:+.4f} at k={kmin_wide:+.3f}, negative on "
+                f"k in [{neg.min():+.3f},{neg.max():+.3f}] in the EXTRAPOLATED call "
+                f"wing beyond the traded strikes (standard raw-SVI wing behaviour)")
 
 # ---------------- calendar check (model-free, shared strikes) ----------------
 cal_txt = "n/a (no longer expiry available)"
@@ -236,8 +254,7 @@ print(f"raw SVI:  a={a:.5f}  b={b:.5f}  rho={rho:+.4f}  m={mm:+.5f}  sigma={sig:
 print(f"fit RMSE={rmse:.3f} vol pts   max abs error={maxerr:.3f} vol pts   SSE={best_f:.3e}")
 print(f"derived:  ATM vol={atm_vol:.2f}%  ATM skew d(sig)/dk={atm_skew:+.2f} vol pts/unit-k  "
       f"vertex k*={k_star:+.3f}  w_min={w_min:.5f}  wings(L,R)=({slope_L:.3f},{slope_R:.3f})")
-print(f"butterfly: min g(k)={gmin:.5f} at k={kmin:+.3f}  -> "
-      f"{'arbitrage-FREE (g>=0)' if bfly_ok else 'ARBITRAGE (g<0)'}")
+print(f"butterfly: {wing_txt}")
 print(f"calendar : {cal_txt}")
 
 # ---------------- figure ------------------------------------------------------
@@ -260,15 +277,18 @@ for s in ("top", "right"):
 ax1.grid(True, axis="y", alpha=0.25)
 
 ax2.axhline(0, color="#7c1c2c", lw=0.9)
-ax2.fill_between(kg, np.clip(g, 0, None), 0, color="#2f6d4f", alpha=0.45, lw=0)
-ax2.plot(kg, g, lw=1.3, color="#2f6d4f")
-ax2.plot([kmin], [gmin], "o", ms=4, color="#a8762f")
-ax2.annotate(f"min g = {gmin:.3f}", xy=(kmin, gmin), xytext=(kmin + 0.02, gmin + 0.05),
-             fontsize=8, color="#a8762f")
+ax2.fill_between(kg_wide, np.clip(g_wide, 0, None), 0, color="#2f6d4f", alpha=0.45, lw=0)
+ax2.fill_between(kg_wide, np.clip(g_wide, None, 0), 0, color="#7c1c2c", alpha=0.35, lw=0)
+ax2.plot(kg_wide, g_wide, lw=1.3, color="#2f6d4f")
+ax2.axvspan(k.min(), k.max(), color="#31536e", alpha=0.07, lw=0)   # traded-strike band
+ax2.plot([kmin_wide], [gmin_wide], "o", ms=4, color="#a8762f")
+ax2.annotate(f"min g = {gmin_wide:.3f}", xy=(kmin_wide, gmin_wide),
+             xytext=(kmin_wide - 0.16, gmin_wide + 0.05), fontsize=8, color="#a8762f")
 ax2.set_xlabel("log-moneyness  k = ln(K / S)")
 ax2.set_ylabel("g(k)")
-ax2.set_title("(b)  Durrleman butterfly function g(k) >= 0 everywhere -> no butterfly arbitrage",
-              fontsize=9.5, loc="left")
+_btitle = ("(b)  Durrleman g(k) >= 0 over the traded strikes (shaded band)"
+           + ("; dips < 0 in the extrapolated call wing" if not wing_ok else ""))
+ax2.set_title(_btitle, fontsize=9.0, loc="left")
 for s in ("top", "right"):
     ax2.spines[s].set_visible(False)
 ax2.grid(True, axis="y", alpha=0.25)

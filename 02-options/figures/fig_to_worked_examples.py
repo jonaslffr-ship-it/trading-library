@@ -153,12 +153,18 @@ if __name__ == "__main__":
     print("Section 7 scenario: one-week ATM book (K=100, sigma=20%, r=4%, q=0)")
     Tw = 5.0 / 252.0
     g_atm = gamma_raw(100.0, K, Tw, r, sigma, q)
-    col_atm = color_perday_closed(100.0, K, Tw, r, sigma, q)
+    col_atm = color_perday_closed(100.0, K, Tw, r, sigma, q)   # dGamma/dt per CALENDAR day
     sp_atm = speed_closed(100.0, K, Tw, r, sigma, q)
-    g_next = g_atm + col_atm            # gamma one calendar day later (from color)
-    print(f"  ATM gamma today            = {g_atm:.5f}")
-    print(f"  color (per day)            = {col_atm:+.5f}  "
-          f"-> ATM gamma tomorrow ~ {g_next:.5f}  ({100*col_atm/g_atm:+.1f}% from time alone)")
+    # "same time tomorrow" on a TRADING-day clock: one week = 5 sessions, so one
+    # session later the maturity is 4/252. Use the exact reval rather than adding a
+    # per-CALENDAR-day color to a trading-day maturity, which mixes the 252 and 365
+    # clocks and understates the drift (ERRATA B3-drift / audit v1.2).
+    g_next = gamma_raw(100.0, K, 4.0 / 252.0, r, sigma, q)
+    print(f"  ATM gamma today (5/252)    = {g_atm:.5f}")
+    print(f"  ATM gamma tomorrow (4/252) = {g_next:.5f}  "
+          f"({100*(g_next-g_atm)/g_atm:+.1f}% from time alone, trading-day clock)")
+    print(f"  color (per calendar day)   = {col_atm:+.5f}  "
+          f"(a 365-clock rate; adding it to a 252-clock maturity is the old +6.9% mistake)")
     print(f"  speed at ATM               = {sp_atm:+.5f}  (per index point)")
     # gamma after intraday moves of +/-1% and +/-3% (actual vs linear speed estimate)
     for mv in (0.01, 0.03):

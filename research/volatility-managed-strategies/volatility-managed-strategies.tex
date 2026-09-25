@@ -66,7 +66,7 @@ edge grows with horizon (MSE-based $R^2_{OOS}$ from $+23\,\%$ at $h{=}1$ to $+43
 implied volatility adds information (HAR-IV, $p=0.019$), and a rich linear feature set edges HAR-IV
 through \emph{features} rather than regularization or nonlinearity. A loss-matched Gamma-GLM with
 the VIX term-structure slope is the strongest of a few candidates to lower \emph{both} QLIKE ($-4\,\%$) and MSE, in
-both sub-periods (Diebold-Mariano $p=0.0008$, exploratory). A lag diagnostic shows the forecast is
+both sub-periods (Diebold-Mariano $p=0.0008$, but it \emph{fails} the pre-registered Clark-West gate for this near-nested pair, $p\approx0.03>0.0083$, so it is reported as exploratory, not confirmatory). A lag diagnostic shows the forecast is
 well calibrated on average (Mincer-Zarnowitz slope $\approx1$, top-forecast-decile ratio~1.08, tail
 coverage~$9.8\,\%$); its visible ``lag'' is largely mechanical --- of the $2.54\times$
 spike-underestimation a perfectly-calibrated forecaster already produces $\approx1.90\times$, and
@@ -472,8 +472,10 @@ overfit is 0.84, far above the 0.7 gate. \emph{No significant Sharpe advantage:}
 buy-and-hold is $+0.13$, but the 95\,\% Sharpe intervals overlap heavily ($[0.44,1.46]$ versus
 $[0.28,1.34]$). \emph{The clean tail is mostly a volatility artifact:} the combination runs at
 $\approx6.5\,\%$ volatility versus $\approx17\,\%$ for buy-and-hold; normalized to a common risk level
-the drawdown advantage shrinks toward parity, and single-market VMG alone matches or beats the
-combination on vol-matched Calmar. We therefore report no tradeable edge.
+the drawdown advantage shrinks toward parity, and single-market VMG matches the combination on
+Sharpe --- which is scale-invariant, so the vol-matching adds nothing to \emph{that} comparison;
+only a modest Calmar difference survives the common-volatility normalization. We therefore report
+no tradeable edge.
 
 \emph{Cost stress and the graveyard.} VMG and VIXTS survive five basis points --- though VIXTS survives the \emph{cost} stress, not its own hypothesis: the pre-registered Q015 (VIX-term-structure sizing improving Calmar by $+0.05$ to $+0.15$) reaches only $\Delta$Calmar~$\approx+0.023$ at its best grid point, with five of six grid points negative, so it misses its pre-registered band and is recorded \emph{not supported}; and Q012 (TSMOM, correlation $<0.5$ to VMG) measures $0.751$, violating its own condition. The cost-fragile
 families die where they should --- overnight carry collapses to Sharpe $-2.38$ at five basis points

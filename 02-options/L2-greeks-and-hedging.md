@@ -388,7 +388,7 @@ def bsm_greeks(S, K, T, r, sigma, q=0.0, call=True):
 if __name__ == "__main__":
     g = bsm_greeks(S=100, K=100, T=21/252, r=0.04, sigma=0.20, call=True)
     for name in ("price", "delta", "gamma", "vega", "theta", "rho", "vanna", "charm"):
-        print(f"{name:6s} {g[name]:+.5f}")
+        print(f"{name:6s} {g[name]:+.6f}")   # 6 places: vanna/charm differ (ERRATA B3)
 ```
 
 Run on a one-month at-the-money call (S = K = 100, T = 21/252, r = 4%, sigma = 20%), it prints delta +0.535, gamma +0.069, vega +0.115, theta −0.043, and rho +0.043 — matching, to the printed precision, the at-the-money one-month values quoted from Figure 1 in Section 3–Section 6. The point of reproducing them here from a self-contained function is that you can now change one input and watch the whole risk vector move: shorten T and gamma and theta blow up while vega shrinks; raise sigma and vanna and volga come alive. The greeks are not nine unrelated formulae; they are nine slopes of the *same* surface, and this function is that surface's derivative in every direction at once.

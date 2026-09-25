@@ -34,11 +34,25 @@ for k, N in enumerate(Ns):
     draws = rng.normal(0.0, sigma_sr, size=(M, int(N)))
     mc[k] = draws.max(axis=1).mean()
 
-theory = sigma_sr * np.sqrt(2.0 * np.log(Ns))
+theory = sigma_sr * np.sqrt(2.0 * np.log(Ns))            # asymptotic UPPER BOUND
+
+# Finite-N expected maximum (Bailey & Lopez de Prado 2014). The Monte-Carlo curve
+# tracks THIS, not the sqrt(2 ln N) ceiling above it; at N=1000 the ceiling runs
+# ~14% high. (N=1 has expected max 0 by definition.)
+from statistics import NormalDist
+_ppf = np.vectorize(NormalDist().inv_cdf)
+EULER = 0.5772156649015329
+_Ng = np.maximum(Ns, 2)
+bailey = np.where(Ns >= 2,
+                  sigma_sr * ((1 - EULER) * _ppf(1 - 1.0 / _Ng)
+                              + EULER * _ppf(1 - 1.0 / (_Ng * np.e))),
+                  0.0)
 
 fig, ax = plt.subplots(figsize=(6.6, 4.0))
 ax.plot(Ns, theory, "-", color="#7c1c2c", lw=1.8,
-        label=r"$\sigma_{SR}\,\sqrt{2\ln N}$  (noise ceiling)")
+        label=r"$\sigma_{SR}\,\sqrt{2\ln N}$  (asymptotic upper bound)")
+ax.plot(Ns, bailey, "--", color="#2f6d4f", lw=1.6,
+        label=r"Bailey–LdP finite-$N$ $E[\max]$")
 ax.plot(Ns, mc, "o", color="#17120e", ms=4.5,
         label=f"Monte Carlo ({M:,} reps)")
 ax.set_xscale("log")

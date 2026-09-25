@@ -62,6 +62,9 @@ ns, out, nb, nk = run_file("04-quant/L3-overfitting-calibration.md")
 print(f"\n[L3-overfitting-calibration] blocks {nk}/{nb} ok")
 p0 = ns["psr"](0.15, 0.0, 250, 0, 3, rho=0.0); p2 = ns["psr"](0.15, 0.0, 250, 0, 3, rho=0.2)
 chk("F4 psr(rho=0.2) < psr(rho=0.0) (Lo correction bites)", p2 < p0, f"{p0:.4f} -> {p2:.4f}")
+d0 = ns["deflated_sharpe"](0.32, 250, 0, 3, 10, 0.02, rho=0.0)
+d2 = ns["deflated_sharpe"](0.32, 250, 0, 3, 10, 0.02, rho=0.2)
+chk("B7 deflated_sharpe(rho=0.2) < (rho=0.0) (Lo correction REACHES the DSR)", d2 < d0, f"{d0:.4f} -> {d2:.4f}")
 f = [0.2, 0.8, 0.5, 0.65, 0.35] * 40
 y = [1 if random.Random(1).random() < p else 0 for p in f]
 bm = ns["brier_murphy"](f, y)

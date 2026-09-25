@@ -105,11 +105,22 @@ for md in depths:
     acc_in = (p_in == yv[:split]).mean(); acc_oo = (p_oo == yv[split:]).mean()
     print(f"{md:9d} {si:10.2f} {so:11.2f} {acc_in:7.3f} {acc_oo:8.3f}")
 
+# Majority-class ("always-long") baseline: the honest benchmark for a directional
+# call is NOT a 50% coin flip but predicting the majority class every day. On this
+# sample up-days are ~54.6%, so a model at ~52% OOS accuracy is worse than always-long.
+base_acc = float((yv[split:] == 1).mean())                     # OOS up-day fraction
+base_sr = sharpe(np.ones_like(fv[split:]), fv[split:])          # always-long OOS Sharpe
+print(f"{'baseline':>9s} {sharpe(np.ones_like(fv[:split]), fv[:split]):10.2f} "
+      f"{base_sr:11.2f} {(yv[:split]==1).mean():7.3f} {base_acc:8.3f}   "
+      f"<- always-long majority-class baseline (OOS acc to beat = {base_acc:.3f})")
+
 # ---------------- figure ------------------------------------------------------
 fig, ax = plt.subplots(figsize=(6.9, 4.3))
 ax.plot(depths, sr_in, "o-", color="#7c1c2c", lw=2.0, label="in-sample (fit on this data)")
 ax.plot(depths, sr_oos, "s-", color="#31536e", lw=2.0, label="out-of-sample (untouched)")
 ax.axhline(0, color="#666", lw=0.7)
+ax.axhline(base_sr, color="#2f6d4f", lw=1.3, ls="--",
+           label=f"always-long baseline (Sharpe {base_sr:.2f}; {base_acc*100:.1f}% up-days)")
 ax.fill_between(depths, sr_oos, sr_in, color="#c9a24b", alpha=0.18)
 ax.annotate("the overfitting gap", xy=(8, 0.5 * (sr_in[-2] + sr_oos[-2])),
             xytext=(4.4, 0.55 * max(sr_in)), fontsize=9, color="#8a6410",

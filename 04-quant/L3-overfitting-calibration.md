@@ -167,9 +167,11 @@ def expected_max_sr(n_trials, var_trials):
     return math.sqrt(var_trials) * ((1 - EULER) * norm_ppf(1 - 1.0 / n_trials)
                                     + EULER * norm_ppf(1 - 1.0 / (n_trials * math.e)))
 
-def deflated_sharpe(sr, n, skew, kurt, n_trials, var_trials):
-    """DSR: PSR measured against the expected max of n_trials noise trials."""
-    return psr(sr, expected_max_sr(n_trials, var_trials), n, skew, kurt)
+def deflated_sharpe(sr, n, skew, kurt, n_trials, var_trials, rho=0.0):
+    """DSR: PSR measured against the expected max of n_trials noise trials.
+    rho forwards the Lo (2002) AR(1) correction to psr, so the DSR is also
+    deflated for serial dependence (rho=0 -> iid)."""
+    return psr(sr, expected_max_sr(n_trials, var_trials), n, skew, kurt, rho)
 ```
 
 Three implementation notes decide whether the answer is honest. First, `sr` and `var_trials` are *per-period* quantities; if you work in annualized Sharpe, divide by √252 before calling and the ratio is unchanged, but do not mix units — a per-period Sharpe fed to a formula expecting annualized inflates the result grotesquely. Second, `var_trials` is the variance of the Sharpe estimates *across your trials*, and it is the channel through which trial *correlation* enters: gate variants that share most of their trades produce highly correlated Sharpes and a *small* V[SR], which lowers the noise ceiling — twenty near-identical variants are not twenty independent trials, and the formula rewards you for that only if you measure V[SR] from the trials themselves rather than assuming independence. Third, `n_trials` is the honest count from Section 2.3, including the silent ones; understating it is the easiest way to make a bad strategy pass.
@@ -517,10 +519,13 @@ def expected_max_sr(n_trials, var_trials):
     return math.sqrt(var_trials) * ((1 - EULER) * norm_ppf(1 - 1.0 / n_trials)
                                     + EULER * norm_ppf(1 - 1.0 / (n_trials * math.e)))
 
-def deflated_sharpe(sr, n, skew, kurt, n_trials, var_trials):
+def deflated_sharpe(sr, n, skew, kurt, n_trials, var_trials, rho=0.0):
     """DSR verdict for a per-period Sharpe `sr` selected as best of `n_trials`.
-    `var_trials` is the variance of the Sharpe estimates ACROSS the trials."""
-    return psr(sr, expected_max_sr(n_trials, var_trials), n, skew, kurt)
+    `var_trials` is the variance of the Sharpe estimates ACROSS the trials.
+    `rho` forwards the Lo (2002) AR(1) correction to psr so the DSR is also
+    deflated for serial dependence (rho=0 -> iid); skipping it under
+    autocorrelation makes the gate look more precise than it is."""
+    return psr(sr, expected_max_sr(n_trials, var_trials), n, skew, kurt, rho)
 
 # ---- Probability of Backtest Overfitting via CSCV (Bailey et al. 2017) ----
 def pbo_cscv(returns, s_blocks=16):

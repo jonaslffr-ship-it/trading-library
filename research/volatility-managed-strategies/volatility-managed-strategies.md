@@ -27,7 +27,7 @@ p = 0.019), and a rich linear feature set edges HAR-IV through *features* — un
 (0.1968) ties Lasso (0.1977) within an un-tested third-decimal difference and gradient boosting
 adds nothing on QLIKE (0.2045, DM p = 0.86); a loss-matched Gamma-GLM with the VIX term-structure
 slope is the **strongest** of a few candidates to lower *both* QLIKE (−4 %) and MSE, out of sample
-and in both sub-periods (DM p = 0.0008, exploratory). A lag diagnostic shows the forecast is well-calibrated on average
+and in both sub-periods (DM p = 0.0008, but it *fails* the pre-registered Clark-West gate for this near-nested pair, p ≈ 0.03 > 0.0083, so it is reported as exploratory, not confirmatory). A lag diagnostic shows the forecast is well-calibrated on average
 (Mincer-Zarnowitz slope ≈ 1, top-forecast-decile ratio 1.08, tail coverage 9.8 %); its visible
 "lag" is largely mechanical — of the 2.54× spike-underestimation, a perfectly-calibrated
 forecaster already produces ≈ 1.90× (outcome selection under right skew), and only the residual
@@ -298,9 +298,12 @@ Sharpe. So far, so encouraging. The combination then looks good on paper:
   improvement is inside the noise.
 - **The clean tail is mostly a volatility artifact.** The combination runs at ≈ 6.5 %
   volatility vs. ≈ 17 % for buy-and-hold; normalized to a common 6.5 % risk level the drawdown
-  advantage shrinks from −9.9 % vs −34.0 % to **−9.7 % vs −13.4 %**, and single-market VMG matches
-  the combination on vol-matched *Sharpe* (0.945 vs 0.941), though the combination keeps a Calmar
-  edge (0.624 vs 0.549). Either way the 3.5 %-vs-91 % headline is **not** a diversification edge
+  advantage shrinks from −9.9 % vs −34.0 % to **−9.7 % vs −13.4 %**. Because the Sharpe ratio is
+  scale-invariant (at a zero risk-free rate), rescaling to a common volatility leaves it unchanged,
+  so "vol-matched Sharpe" is just Sharpe: single-market VMG and the combination match on **Sharpe**
+  (0.945 vs 0.941). What the common vol level actually changes is the drawdown and **Calmar**, where
+  the combination keeps a real edge (0.624 vs 0.549) — that ΔCalmar, not the Sharpe tie, is the point.
+  Either way the 3.5 %-vs-91 % headline is **not** a diversification edge
   but a volatility level.
 
 Note also that the selected combination (C5) blends in sleeves we elsewhere report as failures —
